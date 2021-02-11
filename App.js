@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+// import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 
@@ -12,7 +13,9 @@ import HomeTab from './src/tabs/HomeTab.js';
 import SearchTab from './src/tabs/SearchTab.js';
 import YourLibraryTab from './src/tabs/YourLibraryTab.js';
 
-const Tab = createMaterialBottomTabNavigator();
+import MiniPlayer from './src/components/MiniPlayer.js';
+
+const Tab = createBottomTabNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -61,6 +64,15 @@ const Main = (props) => {
       <Tab.Navigator
         initialRouteName="Home"
         barStyle={{ backgroundColor: colors.primary }}
+        tabBar={(tabsProps) => (
+          <>
+            <MiniPlayer />
+            <BottomTabBar {...tabsProps}/>
+          </>
+        )}
+        tabBarOptions={{
+          activeTintColor: "red"
+        }}
       >
         <Tab.Screen 
           name="Home" 
