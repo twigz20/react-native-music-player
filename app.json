@@ -1,0 +1,12 @@
+{
+  "name": "twigz-app",
+  "displayName": "twigz-app",
+  "expo": {
+    "name": "twigz-app",
+    "slug": "twigz-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
