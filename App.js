@@ -1,21 +1,101 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
 
-export default function App() {
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from 'react-native-paper';
+
+import TrackPlayer from 'react-native-track-player';
+
+import HomeTab from './src/tabs/HomeTab.js';
+import SearchTab from './src/tabs/SearchTab.js';
+import YourLibraryTab from './src/tabs/YourLibraryTab.js';
+
+const Tab = createMaterialBottomTabNavigator();
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors
+  },
+};
+
+const Main = (props) => {
+  const [isTrackPlayerInit, setIsTrackPlayerInit] = useState(false);
+  const { colors } = useTheme();
+
+  useEffect(() => {
+    const startPlayer = async () => {
+        let isInit =  await setup();
+        setIsTrackPlayerInit(isInit);
+    }
+    startPlayer();
+  }, []);
+
+  async function setup() {
+    await TrackPlayer.setupPlayer({
+      maxCacheSize: 1024 * 10
+    });
+    await TrackPlayer.updateOptions({
+      stopWithApp: true,
+      capabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
+        TrackPlayer.CAPABILITY_JUMP_FORWARD,
+        TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+      ],
+      compactCapabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE
+      ]
+    });
+    return true;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName="Home"
+        barStyle={{ backgroundColor: colors.primary }}
+      >
+        <Tab.Screen 
+          name="Home" 
+          component={HomeTab}         
+          options={{
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="home" color={color} size={26} />
+            ),
+          }} />
+        <Tab.Screen 
+          name="Search" 
+          component={SearchTab} 
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="magnify" color={color} size={26} />
+            ),
+          }}/>
+        <Tab.Screen 
+          name="Your Library" 
+          component={YourLibraryTab} 
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="music-box-multiple" color={color} size={26} />
+            ),
+          }}/>
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App(props) {
+  return (
+    <PaperProvider theme={theme}>
+      <Main />
+    </PaperProvider>
+  );
+}
