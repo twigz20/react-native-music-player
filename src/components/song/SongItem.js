@@ -30,7 +30,7 @@ const SongItem = ({ track, playlistId }) => {
   return (
     <List.Item
       title={track.title}
-      description={track.artist + " - " + buildTime(track.duration)}
+      description={track.artists + " - " + buildTime(track.duration)}
       titleStyle={{
         color: titleColor,
         fontSize: 15,

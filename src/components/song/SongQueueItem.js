@@ -38,7 +38,7 @@ const SongQueueItem = ({ track, getQueue }) => {
       {isVisible ? (
         <List.Item
           title={track.title}
-          description={track.artist}
+          description={track.artists}
           titleStyle={{
             color: titleColor,
             fontSize: 15,

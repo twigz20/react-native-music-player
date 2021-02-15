@@ -8,7 +8,7 @@ export const buildTime = (totalSeconds) => {
   const secondsStr = String(seconds).padStart(2, "0");
 
   if (hours > 0) {
-    return `${hours}:${minutesStr}:${secondsStr}`;
+    return `${hours}:${minutesStr.padStart(2, "0")}:${secondsStr}`;
   }
 
   return `${minutesStr}:${secondsStr}`;
