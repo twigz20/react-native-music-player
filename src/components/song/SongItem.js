@@ -34,26 +34,29 @@ const SongItem = ({ track, playlistId }) => {
       titleStyle={{
         color: titleColor,
         fontSize: 15,
+        marginLeft: "-50%",
       }}
       descriptionStyle={{
         color: "#A0A0A0",
         fontSize: 12,
+        marginLeft: "-50%",
       }}
       style={{}}
       left={() => (
-        <Box
-          h={60}
-          w={60}
-          radius={10}
-          mr={10}
-          justify="center"
-          style={{ overflow: "hidden" }}
-        >
-          <Image source={{ uri: track.artwork }} style={styles.image_view} />
+        <Box f={1} w={250} justify="center" style={{ overflow: "hidden" }}>
+          <Box
+            h={60}
+            w={60}
+            radius={10}
+            justify="center"
+            style={{ overflow: "hidden" }}
+          >
+            <Image source={{ uri: track.artwork }} style={styles.image_view} />
+          </Box>
         </Box>
       )}
       right={() => (
-        <Box f={1} align="end" justify="center">
+        <Box f={1} w={10} align="end" justify="center">
           <SongItemMenu />
         </Box>
       )}

@@ -11,6 +11,7 @@ export const DBContext = React.createContext({
 
 export const DBProvider = (props) => {
   const [tracks, setTracks] = React.useState([]);
+  const [isTracksLoaded, setIsTracksLoaded] = React.useState(false);
   const [isDbReady, setIsDbReady] = React.useState(false);
   const db = React.useRef(null);
 
@@ -29,6 +30,7 @@ export const DBProvider = (props) => {
         if (db.current) {
           const _tracks = await db.current.getTracksInfo();
           setTracks(_tracks);
+          setIsTracksLoaded(true);
         }
       })();
     }
@@ -37,20 +39,26 @@ export const DBProvider = (props) => {
   React.useEffect(() => {
     if (db.current && db.current.isReady) {
       (async () => {
-        let currentDBTrackIds = tracks.map((t) => t.track_id);
-        for (let i = 0; i < storeTracks.length; i++) {
-          if (!currentDBTrackIds.includes(storeTracks[i].id)) {
-            insertTrackInfo(storeTracks[i].id);
-          } else {
-            console.log("Skipped: ", storeTracks[i].id);
+        if (isTracksLoaded && storeTracks && storeTracks.length) {
+          let currentDBTrackIds = tracks.map((t) => t.track_id);
+          let newTracksAdded = false;
+          for (let i = 0; i < storeTracks.length; i++) {
+            if (!currentDBTrackIds.includes(storeTracks[i].id)) {
+              insertTrackInfo(storeTracks[i].id);
+              newTracksAdded = true;
+            } else {
+              console.log("Skipped: ", storeTracks[i].id);
+            }
+          }
+
+          if (newTracksAdded) {
+            const _tracks = await db.current.getTracksInfo();
+            setTracks(_tracks);
           }
         }
-
-        const _tracks = await db.current.getTracksInfo();
-        setTracks(_tracks);
       })();
     }
-  }, [storeTracks]);
+  }, [isTracksLoaded, storeTracks]);
 
   const favTrack = async (track_id, favourite) => {
     if (db.current) {

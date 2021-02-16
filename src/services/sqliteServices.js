@@ -19,7 +19,7 @@ export class SQliteServices {
           await this._db.executeSql(
             `
           CREATE TABLE IF NOT EXISTS echo_tracks (
-            seq INTEGER PRIMARY KEY AUTOINCREMENT,
+            seq int(11) PRIMARY KEY AUTOINCREMENT,
             track_id int(11) NOT NULL,
             favourite tinyint(1) NOT NULL DEFAULT 0,
             play_count int(11) NOT NULL DEFAULT 0,

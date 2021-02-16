@@ -48,21 +48,18 @@ const MainTabNavigator = () => {
           ),
         }}
       />
+
       <MainTab.Screen
-        name="Playlist"
+        name="Albums"
         component={HomeTab}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="music-box-multiple"
-              color={color}
-              size={26}
-            />
+            <MaterialCommunityIcons name="album" color={color} size={26} />
           ),
         }}
       />
       <MainTab.Screen
-        name="Artist"
+        name="Artists"
         component={HomeTab}
         options={{
           tabBarIcon: ({ color }) => (
@@ -71,11 +68,15 @@ const MainTabNavigator = () => {
         }}
       />
       <MainTab.Screen
-        name="Album"
+        name="Playlists"
         component={HomeTab}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="album" color={color} size={26} />
+            <MaterialCommunityIcons
+              name="music-box-multiple"
+              color={color}
+              size={26}
+            />
           ),
         }}
       />
