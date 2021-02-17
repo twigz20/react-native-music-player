@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserPlaying } from "../../reducers/Player/actions";
 import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
+import TextTicker from "react-native-text-ticker";
 
 export default function MiniPlayer() {
   const dispatch = useDispatch();
@@ -71,15 +72,19 @@ export default function MiniPlayer() {
                 <Image source={{ uri: track.artwork }} style={{ flex: 1 }} />
               </Box>
               <Box f={1} mr={20}>
-                <Text
+                <TextTicker
+                  style={{ fontSize: 12, color: theme.color.blueShade1 }}
                   numberOfLines={1}
-                  size={12}
-                  color={theme.color.blueShade1}
+                  duration={15000}
+                  loop
+                  bounce
+                  repeatSpacer={50}
+                  marqueeDelay={1000}
                 >
                   {track.title}
-                </Text>
+                </TextTicker>
                 <Text numberOfLines={1} size={8} color={theme.color.blueShade1}>
-                  {track.artist}
+                  {track.artists}
                 </Text>
               </Box>
               <Box mr={10}>

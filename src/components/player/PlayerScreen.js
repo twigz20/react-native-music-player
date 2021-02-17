@@ -26,6 +26,7 @@ import {
   setShuffleMode,
 } from "../../reducers/Player/actions.js";
 import { DBContext } from "../../contexts/DBContext.js";
+import TextTicker from "react-native-text-ticker";
 
 const { width, height } = Dimensions.get("window");
 
@@ -71,7 +72,7 @@ const PlayerScreen = () => {
     let before = [];
     let after = [];
     for (let i = 0; i < playlists.length; i++) {
-      if (playlists[i].id == trackId) {
+      if (playlists[i] == trackId) {
         foundCurrentTrackId = true;
         continue;
       }
@@ -204,12 +205,27 @@ const PlayerScreen = () => {
                   }
                 />
               </TouchableOpacity>
-              <Box center mb="sm">
-                <Text center color="white" size={15}>
+              <Box
+                center
+                mb="sm"
+                justify="center"
+                align="center"
+                dir="col"
+                w="80%"
+              >
+                <TextTicker
+                  style={{ fontSize: 15, color: theme.color.white }}
+                  numberOfLines={1}
+                  duration={15000}
+                  loop
+                  bounce
+                  repeatSpacer={50}
+                  marqueeDelay={1000}
+                >
                   {track.title}
-                </Text>
-                <Text color="grey" size={10}>
-                  {track.artist}
+                </TextTicker>
+                <Text color="grey" size={10} numberOfLines={1}>
+                  {track.artists}
                 </Text>
               </Box>
               <TouchableOpacity onPress={() => navigation.navigate("Queue")}>

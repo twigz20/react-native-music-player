@@ -10,6 +10,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useTheme } from "react-native-paper";
 
 import HomeTab from "../tabs/HomeTab.js";
+import AlbumsTab from "../tabs/AlbumsTab.js";
 import SongsTab from "../tabs/SongsTab.js";
 
 import MiniPlayer from "../components/miniPlayer/MiniPlayer.js";
@@ -51,7 +52,7 @@ const MainTabNavigator = () => {
 
       <MainTab.Screen
         name="Albums"
-        component={HomeTab}
+        component={AlbumsTab}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="album" color={color} size={26} />

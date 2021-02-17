@@ -5,23 +5,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 import MainTabNavigator from "../navigators/MainTabNavigator.js";
 import PlayerScreen from "../components/player/PlayerScreen.js";
-import QueueScreen from "../components/queue/QueueScreen.js";
+import QueueScreen from "../screens/QueueScreen.js";
 
-import { setAllPlaylists } from "../reducers/Song/actions";
-import { adjustDbTrackInfo } from "../reducers/DB/actions";
+import { setAllPlaylists } from "../reducers/Library/actions";
 import { PlaylistType } from "../constants/constants.js";
 
 const MainStack = createStackNavigator();
 
 const MainStackNavigator = () => {
-  const { tracks } = useSelector((state) => state.Song);
+  const { tracks } = useSelector((state) => state.Library);
   const dispatch = useDispatch();
 
   useEffect(() => {
     let playlists = {};
-    playlists[PlaylistType.ALL] = tracks;
+    playlists[PlaylistType.ALL] = tracks.map((t) => t.id);
     dispatch(setAllPlaylists(playlists));
-    dispatch(adjustDbTrackInfo(tracks));
   }, [tracks]);
 
   return (

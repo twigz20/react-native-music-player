@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { Appbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
-import QueueMenu from "../../menus/QueueMenu.js";
+import QueueMenu from "../menus/QueueMenu.js";
 
 const QueueNavBar = () => {
   const navigation = useNavigation();

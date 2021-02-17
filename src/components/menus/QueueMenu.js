@@ -5,7 +5,7 @@ import { Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import TrackPlayer from "react-native-track-player";
-import { playerReset } from "../reducers/Player/actions";
+import { playerReset } from "../../reducers/Player/actions";
 
 const QueueMenu = () => {
   const [visible, setVisible] = React.useState(false);

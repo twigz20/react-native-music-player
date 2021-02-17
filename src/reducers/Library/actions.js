@@ -1,5 +1,4 @@
 import * as types from "./types";
-import TrackPlayer from "react-native-track-player";
 
 export const setAllPlaylists = (playlists) => {
   return {
@@ -10,7 +9,7 @@ export const setAllPlaylists = (playlists) => {
 
 export function setPlaylist(id) {
   return {
-    type: types.SET_PLAYLIST,
+    type: types.SET_CURRENT_PLAYLIST,
     payload: {
       id,
     },
@@ -19,13 +18,13 @@ export function setPlaylist(id) {
 
 export const getTrackList = () => {
   return (dispatch) => {
-    fetch("http://192.168.1.113:8161/tracks", {
+    fetch("http://192.168.1.113:8161/tracks?limit=5", {
       method: "GET",
     })
       .then((response) => response.json())
       .then((responseJson) => {
         dispatch({
-          type: types.GET_PLAYLIST,
+          type: types.GET_TRACKS,
           payload: responseJson,
         });
       })

@@ -2,7 +2,7 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import NavBar from "../components/navbar/NavBar.js";
-import SongsScreen from "../screens/Song/SongsScreen.js";
+import SongsScreen from "../screens/SongsScreen.js";
 
 const YourLibraryStack = createStackNavigator();
 

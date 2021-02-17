@@ -5,7 +5,8 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "emulator": "C:/Users/Twigz/AppData/Local/Android/Sdk/emulator/emulator -avd Emulator"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "2",
@@ -37,6 +38,8 @@
     "react-native-screens": "^2.17.1",
     "react-native-sortable-list": "^0.0.24",
     "react-native-sqlite-storage": "^5.0.0",
+    "react-native-super-grid": "^4.1.1",
+    "react-native-text-ticker": "^1.11.0",
     "react-native-track-player": "^1.2.3",
     "react-native-unimodules": "~0.12.0",
     "react-native-vector-icons": "^8.0.0",

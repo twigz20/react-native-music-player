@@ -3,16 +3,16 @@ import { Box, Text } from "react-native-design-utility";
 import { FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-import BackgroundImage from "../background/BackgroundImage.js";
+import BackgroundImage from "../components/background/BackgroundImage.js";
 
-import { theme } from "../../constants/theme";
+import { theme } from "../constants/theme";
 import TrackPlayer from "react-native-track-player";
-import QueueNavBar from "../navbar/QueueNavBar.js";
-import SongQueueItem from "../song/SongQueueItem.js";
+import QueueNavBar from "../components/navbar/QueueNavBar.js";
+import SongQueueItem from "../components/queue/QueueItem.js";
 
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { useDispatch, useSelector } from "react-redux";
-import { buildTime } from "../../utils/helpers.js";
+import { buildTime } from "../utils/helpers.js";
 
 const QueueScreen = () => {
   const [queue, setQueue] = React.useState([]);
@@ -20,7 +20,6 @@ const QueueScreen = () => {
   const [maxTrackNumber, setMaxTrackNumber] = React.useState(1);
   const [timeRemaining, setTimeRemaining] = React.useState("00:00");
   const { track } = useSelector((state) => state.Player);
-  const { id: playlistId } = useSelector((state) => state.Song);
 
   const setTrackNumbers = async (tracks) => {
     setMaxTrackNumber(tracks.length);
@@ -63,7 +62,7 @@ const QueueScreen = () => {
   // }, []);
 
   return (
-    <BackgroundImage>
+    <BackgroundImage navbarSpace={false}>
       <QueueNavBar />
       <Box ml={10}>
         <Text color={theme.color.white} size={35} bold>

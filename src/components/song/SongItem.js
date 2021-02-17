@@ -4,7 +4,7 @@ import { Image, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import { buildTime } from "../../utils/helpers";
 import { Box } from "react-native-design-utility";
-import SongItemMenu from "../../menus/SongItemMenu.js";
+import SongItemMenu from "../menus/SongItemMenu.js";
 import { useDispatch, useSelector } from "react-redux";
 
 import { itemPlay } from "reducers/Player/actions";

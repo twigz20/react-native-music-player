@@ -8,10 +8,8 @@ import MainStackNavigator from "../navigators/MainStackNavigator.js";
 import { NavigationContainer } from "@react-navigation/native";
 
 import store from "./store";
-// import Playlist from "screens/Playlist";
 
 import { updatePlayback, initializePlayback } from "reducers/Player/actions";
-import { initDb } from "reducers/DB/actions";
 
 import Service from "./service";
 
@@ -24,7 +22,6 @@ const theme = {
 
 export default function withProvider() {
   store.dispatch(initializePlayback());
-  store.dispatch(initDb());
 
   AppState.addEventListener("change", (appState) => {
     if (appState == "active") {

@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Appbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
-import NavBarMenu from "../../menus/NavBarMenu.js";
+import NavBarMenu from "../menus/NavBarMenu.js";
 
 const NavBar = ({ navigation, previous }) => {
   return (

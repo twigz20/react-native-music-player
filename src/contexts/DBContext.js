@@ -15,7 +15,7 @@ export const DBProvider = (props) => {
   const [isDbReady, setIsDbReady] = React.useState(false);
   const db = React.useRef(null);
 
-  const { tracks: storeTracks } = useSelector((state) => state.Song);
+  const { tracks: storeTracks } = useSelector((state) => state.Library);
 
   React.useEffect(() => {
     db.current = new SQliteServices();
