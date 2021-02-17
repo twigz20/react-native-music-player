@@ -1,23 +1,25 @@
-import * as React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import NavBar from "../components/navbar/NavBar.js";
 import SongsScreen from "../screens/SongsScreen.js";
+import { shallowEqual, useSelector } from "react-redux";
+import { memo } from "react";
 
-const YourLibraryStack = createStackNavigator();
+const SongsStack = createStackNavigator();
 
-const YourLibraryTab = () => {
+const SongsTab = () => {
   return (
-    <YourLibraryStack.Navigator
+    <SongsStack.Navigator
       initialRouteName="Songs"
       screenOptions={{
         headerTransparent: true,
         header: (props) => <NavBar {...props} />,
       }}
     >
-      <YourLibraryStack.Screen name="Songs" component={SongsScreen} />
-    </YourLibraryStack.Navigator>
+      <SongsStack.Screen name="Songs" component={SongsScreen} />
+    </SongsStack.Navigator>
   );
 };
 
-export default YourLibraryTab;
+export default SongsTab;

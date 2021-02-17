@@ -86,7 +86,6 @@ export class SQliteServices {
           "INSERT INTO echo_tracks (track_id, date_added) VALUES (?, ?)",
           [track.track_id, track.date_added],
           () => {
-            console.log(`Track Inserted: ${track.track_id}`);
             resolve();
           },
           (error) => {
@@ -110,8 +109,6 @@ export class SQliteServices {
             track.track_id,
           ],
           () => {
-            console.log(track);
-            console.log(`Track Info Updated: ${track.track_id}`);
             resolve();
           },
           (error) => {

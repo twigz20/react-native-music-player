@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, memo } from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -19,7 +19,12 @@ import { Box, Text } from "react-native-design-utility";
 import ProgressSlider from "./ProgressSlider.js";
 import { useDispatch, useSelector } from "react-redux";
 
-import TrackPlayer, { STATE_PAUSED } from "react-native-track-player";
+import TrackPlayer, {
+  useTrackPlayerEvents,
+  TrackPlayerEvents,
+  STATE_PAUSED,
+} from "react-native-track-player";
+
 import {
   setUserPlaying,
   setReplay,
@@ -30,15 +35,31 @@ import TextTicker from "react-native-text-ticker";
 
 const { width, height } = Dimensions.get("window");
 
+// Subscribing to the following events inside MiniPlayer
+const events = [
+  TrackPlayerEvents.PLAYBACK_STATE,
+  TrackPlayerEvents.PLAYBACK_ERROR,
+];
+
 const PlayerScreen = () => {
   const dispatch = useDispatch();
-  const { track, state, playing, shuffle, replay } = useSelector(
+  const { track, playing, shuffle, replay } = useSelector(
     (state) => state.Player
   );
   const dbContext = useContext(DBContext);
 
   const navigation = useNavigation();
   const [isFavourite, setFavourite] = useState(false);
+  const [state, setState] = useState(TrackPlayerEvents.STATE_PLAYING);
+
+  useTrackPlayerEvents(events, (event) => {
+    if (event.type === TrackPlayerEvents.PLAYBACK_ERROR) {
+      console.warn("An error occurred while playing the current track.");
+    }
+    if (event.type === TrackPlayerEvents.PLAYBACK_STATE) {
+      setState(event.state);
+    }
+  });
 
   useEffect(() => {
     if (track) {
@@ -55,7 +76,6 @@ const PlayerScreen = () => {
   };
 
   const onPressShuffle = () => {
-    console.log(shuffle);
     dispatch(setShuffleMode(!shuffle));
   };
 
@@ -72,14 +92,14 @@ const PlayerScreen = () => {
     let before = [];
     let after = [];
     for (let i = 0; i < playlists.length; i++) {
-      if (playlists[i] == trackId) {
+      if (playlists[i].id == trackId) {
         foundCurrentTrackId = true;
         continue;
       }
       if (foundCurrentTrackId) {
-        after.push(playlists[i]);
+        after.push(playlists[i].id);
       } else {
-        before.push(playlists[i]);
+        before.push(playlists[i].id);
       }
     }
 
@@ -318,4 +338,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlayerScreen;
+export default memo(PlayerScreen);

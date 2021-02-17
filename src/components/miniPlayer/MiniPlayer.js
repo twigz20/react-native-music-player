@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Image } from "react-native";
 import { Box, Text } from "react-native-design-utility";
 import {
+  useTrackPlayerEvents,
+  TrackPlayerEvents,
   STATE_PAUSED,
   STATE_PLAYING,
   STATE_STOPPED,
@@ -19,11 +21,27 @@ import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
 import TextTicker from "react-native-text-ticker";
 
+// Subscribing to the following events inside MiniPlayer
+const events = [
+  TrackPlayerEvents.PLAYBACK_STATE,
+  TrackPlayerEvents.PLAYBACK_ERROR,
+];
+
 export default function MiniPlayer() {
   const dispatch = useDispatch();
-  const { track, state, playing } = useSelector((state) => state.Player);
   const dbContext = useContext(DBContext);
+  const [state, setState] = useState(TrackPlayerEvents.STATE_PLAYING);
+  const { track, playing } = useSelector((state) => state.Player);
   const [isFavourite, setFavourite] = useState(false);
+
+  useTrackPlayerEvents(events, (event) => {
+    if (event.type === TrackPlayerEvents.PLAYBACK_ERROR) {
+      console.warn("An error occurred while playing the current track.");
+    }
+    if (event.type === TrackPlayerEvents.PLAYBACK_STATE) {
+      setState(event.state);
+    }
+  });
 
   useEffect(() => {
     if (track) {

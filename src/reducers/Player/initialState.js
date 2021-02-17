@@ -4,6 +4,7 @@ export default () => {
     init: false,
     state: null,
     track: null,
+    playlist: null,
     shuffle: false,
     replay: "none",
     playing: false,

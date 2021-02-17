@@ -47,7 +47,6 @@ export const DBProvider = (props) => {
               insertTrackInfo(storeTracks[i].id);
               newTracksAdded = true;
             } else {
-              console.log("Skipped: ", storeTracks[i].id);
             }
           }
 

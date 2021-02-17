@@ -1,6 +1,5 @@
 export default () => {
   return {
-    id: null,
     playlists: {},
     artists: [],
     albums: [],

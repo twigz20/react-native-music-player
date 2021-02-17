@@ -1,3 +1,4 @@
+import { PlaylistType } from "../../constants/constants";
 import initialState from "./initialState";
 import * as types from "./types";
 export * from "./actions";
@@ -18,6 +19,9 @@ export default function reducer(state = initialState(), { type, payload }) {
     case types.GET_TRACKS: {
       let artists = {};
       let albums = {};
+
+      let playlists = {};
+      playlists[PlaylistType.ALL] = payload.map((t) => t.id);
 
       payload.forEach((track) => {
         let mainArtist = track.artists.split(",")[0];
@@ -42,6 +46,7 @@ export default function reducer(state = initialState(), { type, payload }) {
       });
 
       return Object.assign({}, state, {
+        playlists,
         artists,
         albums,
         tracks: payload,

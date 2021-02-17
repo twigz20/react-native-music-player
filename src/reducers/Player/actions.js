@@ -9,7 +9,7 @@ import TrackPlayer, {
 
 import * as types from "./types";
 
-import { setPlaylist, getTrackList } from "../Library/actions";
+import { getTrackList } from "../Library/actions";
 
 import arrayShuffle from "array-shuffle";
 
@@ -28,21 +28,6 @@ export function initializePlayback() {
     await TrackPlayer.setupPlayer({
       maxCacheSize: 1024 * 5, // 5 mb
     });
-
-    setInterval(async () => {
-      const [position, duration] = await Promise.all([
-        TrackPlayer.getPosition(),
-        TrackPlayer.getDuration(),
-      ]);
-
-      const { replay, shuffle, track } = getState().Player;
-
-      if (position && duration && position >= duration) {
-        if (replay == "replayOne") {
-          await TrackPlayer.seekTo(0);
-        }
-      }
-    }, 500);
 
     dispatch(getTrackList());
     dispatch({ type: types.INIT });
@@ -64,7 +49,7 @@ export function playbackState() {
 
 export function playbackTrack() {
   return async (dispatch, getState) => {
-    const { track } = getState().Player;
+    const { track, playlist } = getState().Player;
     if (track != null) {
       const trackId = await TrackPlayer.getCurrentTrack();
       const duration = await TrackPlayer.getDuration();
@@ -76,6 +61,7 @@ export function playbackTrack() {
         payload: {
           track,
           duration,
+          playlist,
         },
       });
     }
@@ -105,12 +91,13 @@ export function setUserPlaying(playing) {
   };
 }
 
-export function setCurrentTrack(track) {
+export function setCurrentTrack(track, playlistId) {
   return {
     type: types.TRACK,
     payload: {
       track,
       duration: track.duration,
+      playlist: playlistId,
     },
   };
 }
@@ -125,9 +112,10 @@ export function setShuffle(shuffle) {
 }
 export function setShuffleMode(shuffle) {
   return async (dispatch, getState) => {
-    const { id, playlists, tracks } = getState().Library;
+    const { playlist } = getState().Player;
+    const { playlists, tracks } = getState().Library;
     let trackId = await TrackPlayer.getCurrentTrack();
-    let beforeAfterQueue = getBeforeAfterQueue(trackId, id, playlists);
+    let beforeAfterQueue = getBeforeAfterQueue(trackId, playlist, playlists);
 
     if (shuffle) {
       let queue = [...beforeAfterQueue.before, ...beforeAfterQueue.after];
@@ -135,8 +123,16 @@ export function setShuffleMode(shuffle) {
       await TrackPlayer.remove(queue.map((t) => t.toString()));
 
       let shuffled = arrayShuffle(queue);
+      let shuffledTrackList = [];
 
-      await TrackPlayer.add(shuffled);
+      shuffled.forEach((track_id) => {
+        let track = tracks.find((t) => t.id == track_id);
+        if (track) {
+          shuffledTrackList.push(track);
+        }
+      });
+
+      await TrackPlayer.add(shuffledTrackList);
     } else {
       let queue = await TrackPlayer.getQueue();
       await TrackPlayer.remove(queue.map((t) => t.id.toString()));
@@ -163,15 +159,22 @@ export function setReplay(replay) {
 
 export function playbackQueueEnded(position) {
   return async (dispatch, getState) => {
-    const { shuffle, replay, track } = getState().Player;
-    const { id, playlists, tracks } = getState().Library;
+    const { shuffle, replay, track, playlist } = getState().Player;
+    const { playlists, tracks } = getState().Library;
 
     const state = await TrackPlayer.getState();
 
     // For some reason this event gets fired multiple times
     if (track != null && state == STATE_STOPPED) {
-      if (replay == "replay" && !shuffle) {
-        let beforeAfterQueue = getBeforeAfterQueue(track.id, id, playlists);
+      if (replay == "replayOne") {
+        await TrackPlayer.seekTo(0);
+        await TrackPlayer.play();
+      } else if (replay == "replay" && !shuffle) {
+        let beforeAfterQueue = getBeforeAfterQueue(
+          track.id,
+          playlist,
+          playlists
+        );
 
         await TrackPlayer.remove(
           beforeAfterQueue.before.map((t) => t.toString())
@@ -202,6 +205,15 @@ export function playbackQueueEnded(position) {
         dispatch(setUserPlaying(true));
       }
     }
+  };
+}
+
+export function setPlaylist(id) {
+  return {
+    type: types.PLAYLIST,
+    payload: {
+      playlist: id,
+    },
   };
 }
 
@@ -238,35 +250,37 @@ function getBeforeAfterQueue(trackId, playlistId, playlists) {
 
 export function itemPlay(id, playlistId, reset = true) {
   return async (dispatch, getState) => {
-    const { shuffle } = getState().Player;
-    const { id: playId, playlists, tracks } = getState().Library;
+    try {
+      const { shuffle, playlist } = getState().Player;
+      const { playlists, tracks } = getState().Library;
 
-    if (playlistId !== playId || !reset) {
-      await TrackPlayer.reset();
+      if (playlistId !== playlist || !reset) {
+        await TrackPlayer.reset();
 
-      if (reset) {
-        dispatch(playerReset());
+        if (reset) {
+          dispatch(playerReset());
+        }
+
+        let track = tracks.find((track) => track.id == id);
+        await TrackPlayer.add([track]);
+
+        let beforeAfterQueue = getBeforeAfterQueue(id, playlistId, playlists);
+        let afterTrackList = tracks.filter((t) =>
+          beforeAfterQueue.after.includes(t.id)
+        );
+
+        await TrackPlayer.add(afterTrackList);
+
+        dispatch(setCurrentTrack(track, playlistId));
       }
 
-      let track = tracks.find((track) => track.id == id);
-      await TrackPlayer.add([track]);
+      await TrackPlayer.skip(id.toString());
 
-      let beforeAfterQueue = getBeforeAfterQueue(id, playlistId, playlists);
-      let afterTrackList = tracks.filter((t) =>
-        beforeAfterQueue.after.includes(t.id)
-      );
+      dispatch(setShuffleMode(shuffle));
 
-      await TrackPlayer.add(afterTrackList);
-
-      dispatch(setCurrentTrack(track));
-
-      dispatch(setPlaylist(playlistId));
+      dispatch(setUserPlaying(true));
+    } catch (error) {
+      console.log("Play Error: ", error);
     }
-
-    await TrackPlayer.skip(id.toString());
-
-    dispatch(setShuffleMode(shuffle));
-
-    dispatch(setUserPlaying(true));
   };
 }

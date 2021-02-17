@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { memo } from "react";
 import { Image, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import { buildTime } from "../../utils/helpers";
@@ -12,9 +13,9 @@ import { theme } from "../../constants/theme";
 import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
 
-const SongItem = ({ track, playlistId }) => {
+const SongItem = memo(({ track, playlistId }) => {
   const dispatch = useDispatch();
-  const { track: currentTrack } = useSelector((state) => state.Player);
+  const currentTrack = useSelector((state) => state.Player.track);
   const dbContext = useContext(DBContext);
 
   const _play = async () => {
@@ -65,7 +66,7 @@ const SongItem = ({ track, playlistId }) => {
       }}
     />
   );
-};
+});
 
 const styles = StyleSheet.create({
   image_view: {
