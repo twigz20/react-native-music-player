@@ -27,6 +27,7 @@ export default function reducer(state = initialState(), { type, payload }) {
             trackCount: 0,
             name: mainArtist,
           };
+          playlists[`Artist-${track.artist_id}`] = [track.id];
         }
 
         if (!artists[track.artist_id].albums.includes(track.album_id)) {
@@ -34,6 +35,7 @@ export default function reducer(state = initialState(), { type, payload }) {
         }
 
         artists[track.artist_id].trackCount++;
+        playlists[`Artist-${track.artist_id}`].push(track.id);
 
         if (!Object.keys(albums).includes(track.album_id.toString())) {
           albums[track.album_id] = {
@@ -42,10 +44,10 @@ export default function reducer(state = initialState(), { type, payload }) {
             artwork: track.album_image,
             tracks: [track.id],
           };
-          playlists[`${track.album_id}`] = [track.id];
+          playlists[`Album-${track.album_id}`] = [track.id];
         } else {
           albums[track.album_id].tracks.push(track.id);
-          playlists[`${track.album_id}`].push(track.id);
+          playlists[`Album-${track.album_id}`].push(track.id);
         }
       });
 

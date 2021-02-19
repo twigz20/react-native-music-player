@@ -18,7 +18,7 @@ export function setPlaylist(id) {
 
 export const getTrackList = () => {
   return (dispatch) => {
-    fetch("http://192.168.1.113:8161/tracks?limit=40", {
+    fetch("http://192.168.1.113:8161/tracks", {
       method: "GET",
     })
       .then((response) => response.json())

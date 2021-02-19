@@ -22,7 +22,7 @@ export default function AlbumDetailTrackItem({ track }) {
   const dbContext = useContext(DBContext);
 
   const _play = async () => {
-    dispatch(itemPlay(track.id, track.album_id, false));
+    dispatch(itemPlay(track.id, `Album-${track.album_id}`, false));
     await dbContext.updatePlayInfo(track.id);
   };
 

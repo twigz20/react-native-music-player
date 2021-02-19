@@ -142,7 +142,11 @@ const ArtistDetailScreen = ({ route, navigation }) => {
             </Box>
             <Box>
               {_tracks.map((track, key) => (
-                <SongItem track={track} playlistId={PlaylistType.ALL} />
+                <SongItem
+                  key={key}
+                  track={track}
+                  playlistId={`Artist-${route.params.artist.id}`}
+                />
               ))}
             </Box>
           </Box>

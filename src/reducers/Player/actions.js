@@ -123,6 +123,7 @@ export function setShuffleMode(shuffle) {
       await TrackPlayer.remove(queue.map((t) => t.toString()));
 
       let shuffled = arrayShuffle(queue);
+      shuffled = [...new Set(shuffled)];
       let shuffledTrackList = [];
 
       shuffled.forEach((track_id) => {
