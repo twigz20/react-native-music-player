@@ -32,7 +32,6 @@ const SongsScreen = () => {
             data={tracks}
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => (
-              // <Text>1</Text>
               <SongItem track={item} playlistId={PlaylistType.ALL} />
             )}
             refreshControl={

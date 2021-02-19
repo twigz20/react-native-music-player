@@ -3,9 +3,9 @@ import { FlatGrid } from "react-native-super-grid";
 
 import { useSelector } from "react-redux";
 
-import BackgroundImage from "../components/background/BackgroundImage.js";
+import BackgroundImage from "../../components/background/BackgroundImage.js";
 
-import AlbumItem from "../components/album/AlbumItem.js";
+import AlbumItem from "../../components/album/AlbumItem.js";
 
 export default function AlbumsScreen() {
   const { albums } = useSelector((state) => state.Library);

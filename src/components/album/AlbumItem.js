@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { Box, Text } from "react-native-design-utility";
@@ -9,37 +10,39 @@ import { theme } from "../../constants/theme.js";
 import AlbumItemMenu from "../menus/AlbumItemMenu.js";
 
 export default function AlbumItem({ album }) {
+  const navigator = useNavigation();
+
   return (
-    <Box h={220} px="sm" mt={5}>
-      <TouchableOpacity style={{ flex: 1 }}>
-        <Box dir="col" align="center" justify="between">
-          <Box h="90%" w="125%" radius={10} style={{ overflow: "hidden" }}>
-            <Image source={{ uri: album.artwork }} style={{ flex: 1 }} />
-          </Box>
+    <Box h={180} px="sm" mt={5} dir="col">
+      <TouchableOpacity
+        onPress={() => navigator.navigate("AlbumDetails", { album: album })}
+      >
+        <Box h={130} w={130} radius={10} style={{ overflow: "hidden" }}>
+          <Image source={{ uri: album.artwork }} style={{ flex: 1 }} />
         </Box>
       </TouchableOpacity>
-      <Box dir="row" mt={-35}>
-        <Box f={3} dir="col" ml={-10}>
-          <Box dir="row">
-            <Box>
-              <TextTicker
-                style={{ fontSize: 15, color: theme.color.white }}
-                numberOfLines={1}
-                duration={15000}
-                loop
-                bounce
-                repeatSpacer={50}
-                marqueeDelay={1000}
-              >
-                {album.name}
-              </TextTicker>
-            </Box>
+      <Box f={1} dir="row" mr={-10} ml={10}>
+        <Box dir="col">
+          <Box w={100}>
+            <TextTicker
+              style={{ fontSize: 15, color: theme.color.white }}
+              numberOfLines={1}
+              duration={15000}
+              loop
+              bounce
+              repeatSpacer={50}
+              marqueeDelay={1000}
+            >
+              {album.name}
+            </TextTicker>
           </Box>
-          <Text size={10} color="#A0A0A0">
-            {`${album.tracks.length} Song${album.tracks.length ? "s" : ""}`}
-          </Text>
+          <Box>
+            <Text size={10} color="#A0A0A0">
+              {`${album.tracks.length} Song${album.tracks.length ? "s" : ""}`}
+            </Text>
+          </Box>
         </Box>
-        <Box f={1} dir="col" align="end" justify="center" mr={-15}>
+        <Box dir="col" align="end" justify="center">
           <AlbumItemMenu />
         </Box>
       </Box>

@@ -18,10 +18,12 @@ export const DBProvider = (props) => {
   const { tracks: storeTracks } = useSelector((state) => state.Library);
 
   React.useEffect(() => {
-    db.current = new SQliteServices();
-    db.current.init().then(() => {
-      setIsDbReady(true);
-    });
+    if (!isDbReady) {
+      db.current = new SQliteServices();
+      db.current.init().then(() => {
+        setIsDbReady(true);
+      });
+    }
   }, []);
 
   React.useEffect(() => {

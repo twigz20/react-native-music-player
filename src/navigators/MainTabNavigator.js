@@ -9,6 +9,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import HomeTab from "../tabs/HomeTab.js";
 import AlbumsTab from "../tabs/AlbumsTab.js";
 import SongsTab from "../tabs/SongsTab.js";
+import ArtistsTab from "../tabs/ArtistsTab.js";
 
 import MiniPlayer from "../components/miniPlayer/MiniPlayer.js";
 
@@ -44,7 +45,7 @@ const MainTabNavigator = () => {
         }}
       />
 
-      {/* <MainTab.Screen
+      <MainTab.Screen
         name="Albums"
         component={AlbumsTab}
         options={{
@@ -55,7 +56,7 @@ const MainTabNavigator = () => {
       />
       <MainTab.Screen
         name="Artists"
-        component={HomeTab}
+        component={ArtistsTab}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="account" color={color} size={26} />
@@ -83,7 +84,7 @@ const MainTabNavigator = () => {
             <MaterialCommunityIcons name="folder" color={color} size={26} />
           ),
         }}
-      /> */}
+      />
     </MainTab.Navigator>
   );
 };

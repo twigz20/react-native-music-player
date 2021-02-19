@@ -13,3 +13,11 @@ export const buildTime = (totalSeconds) => {
 
   return `${minutesStr}:${secondsStr}`;
 };
+
+export const getTotalMinutes = (totalSeconds) => {
+  const minutes = Math.floor(totalSeconds / 60);
+
+  const minutesStr = String(minutes);
+
+  return `${minutesStr} minute${minutes > 0 ? "s" : ""}`;
+};

@@ -12,27 +12,23 @@ import { itemPlay } from "reducers/Player/actions";
 import { theme } from "../../constants/theme";
 import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
+import { useNavigation } from "@react-navigation/native";
 
-const SongItem = memo(({ track, playlistId }) => {
-  const dispatch = useDispatch();
-  const currentTrack = useSelector((state) => state.Player.track);
-  const dbContext = useContext(DBContext);
-  const _play = async () => {
-    dispatch(itemPlay(track.id, playlistId, false));
-    await dbContext.updatePlayInfo(track.id);
-  };
-
-  const titleColor =
-    currentTrack && track.id == currentTrack.id
-      ? theme.color.blueShade1
-      : "white";
+const ArtistItem = memo(({ artist }) => {
+  const navigator = useNavigation();
 
   return (
     <List.Item
-      title={track.title}
-      description={track.artists + " - " + buildTime(track.duration)}
+      title={artist.name}
+      description={
+        artist.albums.length +
+        (artist.albums.length > 1 ? " Albums" : " Album") +
+        " - " +
+        artist.trackCount +
+        (artist.trackCount > 1 ? " Songs" : " Song")
+      }
       titleStyle={{
-        color: titleColor,
+        color: "white",
         fontSize: 15,
         marginLeft: "-45%",
       }}
@@ -51,7 +47,7 @@ const SongItem = memo(({ track, playlistId }) => {
             justify="center"
             style={{ overflow: "hidden" }}
           >
-            <Image source={{ uri: track.artwork }} style={styles.image_view} />
+            <Image source={{ uri: artist.artwork }} style={styles.image_view} />
           </Box>
         </Box>
       )}
@@ -60,7 +56,7 @@ const SongItem = memo(({ track, playlistId }) => {
           <SongItemMenu />
         </Box>
       )}
-      onPress={_play}
+      onPress={() => navigator.navigate("ArtistDetails", { artist: artist })}
     />
   );
 });
@@ -72,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SongItem;
+export default ArtistItem;

@@ -5,12 +5,6 @@ export * from "./actions";
 
 export default function reducer(state = initialState(), { type, payload }) {
   switch (type) {
-    case types.SET_CURRENT_PLAYLIST:
-      return {
-        ...state,
-        id: payload.id,
-      };
-
     case types.SET_ALL_PLAYLISTS:
       return Object.assign({}, state, {
         playlists: payload,
@@ -26,22 +20,32 @@ export default function reducer(state = initialState(), { type, payload }) {
       payload.forEach((track) => {
         let mainArtist = track.artists.split(",")[0];
 
-        if (!artists[mainArtist]) {
-          artists[mainArtist] = { artwork: track.artist_image, albums: [] };
+        if (!artists[track.artist_id]) {
+          artists[track.artist_id] = {
+            artwork: track.artist_image,
+            albums: [],
+            trackCount: 0,
+            name: mainArtist,
+          };
         }
 
-        if (!artists[mainArtist].albums.includes(track.album_id)) {
-          artists[mainArtist].albums.push(track.album_id);
+        if (!artists[track.artist_id].albums.includes(track.album_id)) {
+          artists[track.artist_id].albums.push(track.album_id);
         }
+
+        artists[track.artist_id].trackCount++;
 
         if (!Object.keys(albums).includes(track.album_id.toString())) {
           albums[track.album_id] = {
             name: track.album,
+            artist: mainArtist,
             artwork: track.album_image,
             tracks: [track.id],
           };
+          playlists[`${track.album_id}`] = [track.id];
         } else {
           albums[track.album_id].tracks.push(track.id);
+          playlists[`${track.album_id}`].push(track.id);
         }
       });
 

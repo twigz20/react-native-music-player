@@ -2,24 +2,24 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import NavBar from "../components/navbar/NavBar.js";
-import AlbumsScreen from "../screens/AlbumsScreen.js";
-import Page1 from "../screens/Page1.js";
+import AlbumsScreen from "../screens/album/AlbumsScreen.js";
+import AlbumDetailScreen from "../screens/album/AlbumDetailScreen.js";
 
-const HomeStack = createStackNavigator();
+const AlbumStack = createStackNavigator();
 
-const HomeTab = () => {
+const AlbumTab = () => {
   return (
-    <HomeStack.Navigator
+    <AlbumStack.Navigator
       initialRouteName="Albums"
       screenOptions={{
         headerTransparent: true,
         header: (props) => <NavBar {...props} />,
       }}
     >
-      <HomeStack.Screen name="Albums" component={AlbumsScreen} />
-      <HomeStack.Screen name="Page1" component={Page1} />
-    </HomeStack.Navigator>
+      <AlbumStack.Screen name="Albums" component={AlbumsScreen} />
+      <AlbumStack.Screen name="AlbumDetails" component={AlbumDetailScreen} />
+    </AlbumStack.Navigator>
   );
 };
 
-export default HomeTab;
+export default AlbumTab;
