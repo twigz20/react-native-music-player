@@ -4,6 +4,7 @@ import { SQliteServices } from "../services/sqliteServices";
 
 export const DBContext = React.createContext({
   tracks: [],
+  playlistImages: [],
   favTrack: () => Promise.resolve(),
   updatePlayInfo: () => Promise.resolve(),
   getTrackInfo: () => null,
@@ -11,6 +12,7 @@ export const DBContext = React.createContext({
 
 export const DBProvider = (props) => {
   const [tracks, setTracks] = React.useState([]);
+  const [playlistImages, setPlaylistImages] = React.useState([]);
   const [isTracksLoaded, setIsTracksLoaded] = React.useState(false);
   const [isDbReady, setIsDbReady] = React.useState(false);
   const db = React.useRef(null);
@@ -18,12 +20,13 @@ export const DBProvider = (props) => {
   const { tracks: storeTracks } = useSelector((state) => state.Library);
 
   React.useEffect(() => {
-    if (!isDbReady) {
-      db.current = new SQliteServices();
-      db.current.init().then(() => {
-        setIsDbReady(true);
-      });
-    }
+    (async () => {
+      if (!isDbReady) {
+        db.current = new SQliteServices();
+        await db.current.init();
+        setIsDbReady(db.current.isReady);
+      }
+    })();
   }, []);
 
   React.useEffect(() => {
@@ -32,6 +35,8 @@ export const DBProvider = (props) => {
         if (db.current) {
           const _tracks = await db.current.getTracksInfo();
           setTracks(_tracks);
+          const _playlistImages = await db.current.getPlaylistImages();
+          setPlaylistImages(_playlistImages);
           setIsTracksLoaded(true);
         }
       })();
@@ -48,7 +53,6 @@ export const DBProvider = (props) => {
             if (!currentDBTrackIds.includes(storeTracks[i].id)) {
               insertTrackInfo(storeTracks[i].id);
               newTracksAdded = true;
-            } else {
             }
           }
 
@@ -64,13 +68,10 @@ export const DBProvider = (props) => {
   const favTrack = async (track_id, favourite) => {
     if (db.current) {
       let track = tracks.find((t) => t.track_id == track_id);
-
       if (track) {
         track.favourite = favourite;
         await db.current.updateTrackInfo(track);
-
         const _tracks = await db.current.getTracksInfo();
-
         setTracks(_tracks);
       }
     }
@@ -112,6 +113,7 @@ export const DBProvider = (props) => {
 
   const value = {
     tracks,
+    playlistImages,
     favTrack,
     updatePlayInfo,
     getTrackInfo,

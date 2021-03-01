@@ -16,6 +16,15 @@ export function setPlaylist(id) {
   };
 }
 
+export function setTrackList(tracks) {
+  return (dispatch) => {
+    dispatch({
+      type: types.SET_TRACKS,
+      payload: tracks,
+    });
+  };
+}
+
 export const getTrackList = () => {
   return (dispatch) => {
     fetch("http://192.168.1.113:8161/tracks", {
@@ -24,7 +33,7 @@ export const getTrackList = () => {
       .then((response) => response.json())
       .then((responseJson) => {
         dispatch({
-          type: types.GET_TRACKS,
+          type: types.SET_TRACKS,
           payload: responseJson,
         });
       })

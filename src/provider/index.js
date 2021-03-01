@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AppState } from "react-native";
 import { Provider as ReduxProvider } from "react-redux";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
@@ -7,9 +7,12 @@ import { DBProvider } from "../contexts/DBContext.js";
 import MainStackNavigator from "../navigators/MainStackNavigator.js";
 import { NavigationContainer } from "@react-navigation/native";
 
+import * as SplashScreen from "expo-splash-screen";
+
 import store from "./store";
 
 import { updatePlayback, initializePlayback } from "reducers/Player/actions";
+import { setTrackList } from "reducers/Library/actions";
 
 import Service from "./service";
 
@@ -21,15 +24,37 @@ const theme = {
 };
 
 export default function withProvider() {
-  store.dispatch(initializePlayback());
+  useEffect(() => {
+    (async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        await prepareResources();
+        store.dispatch(initializePlayback());
 
-  AppState.addEventListener("change", (appState) => {
-    if (appState == "active") {
-      store.dispatch(updatePlayback());
+        AppState.addEventListener("change", (appState) => {
+          if (appState == "active") {
+            store.dispatch(updatePlayback());
+          }
+        });
+
+        TrackPlayer.registerPlaybackService(() => Service(store.dispatch));
+
+        await SplashScreen.hideAsync();
+      } catch (error) {
+        console.warn(error);
+      }
+    })();
+  }, []);
+
+  const prepareResources = async () => {
+    try {
+      const response = await fetch("http://192.168.1.113:8161/tracks");
+      let tracks = await response.json();
+      store.dispatch(setTrackList(tracks));
+    } catch (error) {
+      console.warn(error);
     }
-  });
-
-  TrackPlayer.registerPlaybackService(() => Service(store.dispatch));
+  };
 
   return (
     <ReduxProvider store={store}>

@@ -29,7 +29,7 @@ export function initializePlayback() {
       maxCacheSize: 1024 * 5, // 5 mb
     });
 
-    dispatch(getTrackList());
+    // dispatch(getTrackList());
     dispatch({ type: types.INIT });
   };
 }

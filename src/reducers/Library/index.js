@@ -10,7 +10,7 @@ export default function reducer(state = initialState(), { type, payload }) {
         playlists: payload,
       });
 
-    case types.GET_TRACKS: {
+    case types.SET_TRACKS: {
       let artists = {};
       let albums = {};
 
