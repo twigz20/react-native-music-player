@@ -9,12 +9,10 @@ import TrackPlayer, {
 
 import * as types from "./types";
 
-import { getTrackList } from "../Library/actions";
-
 import arrayShuffle from "array-shuffle";
 
 export function initializePlayback() {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     TrackPlayer.updateOptions({
       capabilities: [
         TrackPlayer.CAPABILITY_PLAY,
@@ -29,7 +27,6 @@ export function initializePlayback() {
       maxCacheSize: 1024 * 5, // 5 mb
     });
 
-    // dispatch(getTrackList());
     dispatch({ type: types.INIT });
   };
 }

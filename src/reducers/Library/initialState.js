@@ -5,5 +5,6 @@ export default () => {
     albums: [],
     tracks: [],
     isLoading: true,
+    dbInit: false,
   };
 };

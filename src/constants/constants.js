@@ -1,6 +1,6 @@
 export const PlaylistType = {
-  ALL: "ALL",
-  FAVOURITES: "FAVOURITES",
-  MOST_PLAYED: "MOST_PLAYED",
-  RECENTLY_PLAYED: "RECENTLY_PLAYED",
+  ALL: "All Tracks",
+  FAVOURITES: "Favourites",
+  MOST_PLAYED: "Most Played",
+  RECENTLY_PLAYED: "Recently Played",
 };

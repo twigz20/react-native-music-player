@@ -10,6 +10,7 @@ import HomeTab from "../tabs/HomeTab.js";
 import AlbumsTab from "../tabs/AlbumsTab.js";
 import SongsTab from "../tabs/SongsTab.js";
 import ArtistsTab from "../tabs/ArtistsTab.js";
+import PlaylistsTab from "../tabs/PlaylistsTab.js";
 
 import MiniPlayer from "../components/miniPlayer/MiniPlayer.js";
 
@@ -65,7 +66,7 @@ const MainTabNavigator = () => {
       />
       <MainTab.Screen
         name="Playlists"
-        component={HomeTab}
+        component={PlaylistsTab}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons

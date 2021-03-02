@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import NavBar from "../components/navbar/NavBar.js";
-import SongsScreen from "../screens/SongsScreen.js";
+import SongsScreen from "../screens/song/SongsScreen.js";
 import { shallowEqual, useSelector } from "react-redux";
 import { memo } from "react";
 

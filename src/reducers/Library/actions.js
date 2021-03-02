@@ -42,3 +42,10 @@ export const getTrackList = () => {
       });
   };
 };
+
+export function setDBInitialized(dbInit = true) {
+  return {
+    type: types.INIT_DB,
+    payload: dbInit,
+  };
+}

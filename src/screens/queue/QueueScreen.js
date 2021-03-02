@@ -3,16 +3,16 @@ import { Box, Text } from "react-native-design-utility";
 import { FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-import BackgroundImage from "../components/background/BackgroundImage.js";
+import BackgroundImage from "../../components/background/BackgroundImage.js";
 
-import { theme } from "../constants/theme";
+import { theme } from "../../constants/theme";
 import TrackPlayer from "react-native-track-player";
-import QueueNavBar from "../components/navbar/QueueNavBar.js";
-import SongQueueItem from "../components/queue/QueueItem.js";
+import QueueNavBar from "../../components/navbar/QueueNavBar.js";
+import SongQueueItem from "../../components/queue/QueueItem.js";
 
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { useDispatch, useSelector } from "react-redux";
-import { buildTime } from "../utils/helpers.js";
+import { buildTime } from "../../utils/helpers.js";
 
 const QueueScreen = () => {
   const [queue, setQueue] = React.useState([]);

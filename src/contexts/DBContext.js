@@ -1,23 +1,28 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { PlaylistType } from "../constants/constants";
+import { setDBInitialized } from "../reducers/Library";
 import { SQliteServices } from "../services/sqliteServices";
 
 export const DBContext = React.createContext({
   tracks: [],
-  playlistImages: [],
+  playlists: [],
   favTrack: () => Promise.resolve(),
   updatePlayInfo: () => Promise.resolve(),
   getTrackInfo: () => null,
 });
 
 export const DBProvider = (props) => {
+  const dispatch = useDispatch();
   const [tracks, setTracks] = React.useState([]);
-  const [playlistImages, setPlaylistImages] = React.useState([]);
+  const [playlists, setPlaylists] = React.useState([]);
   const [isTracksLoaded, setIsTracksLoaded] = React.useState(false);
   const [isDbReady, setIsDbReady] = React.useState(false);
   const db = React.useRef(null);
 
-  const { tracks: storeTracks } = useSelector((state) => state.Library);
+  const { tracks: storeTracks, playlists: storePlaylists } = useSelector(
+    (state) => state.Library
+  );
 
   React.useEffect(() => {
     (async () => {
@@ -35,8 +40,8 @@ export const DBProvider = (props) => {
         if (db.current) {
           const _tracks = await db.current.getTracksInfo();
           setTracks(_tracks);
-          const _playlistImages = await db.current.getPlaylistImages();
-          setPlaylistImages(_playlistImages);
+          let playlists = await db.current.getPlaylists();
+          setPlaylists(playlists);
           setIsTracksLoaded(true);
         }
       })();
@@ -60,10 +65,74 @@ export const DBProvider = (props) => {
             const _tracks = await db.current.getTracksInfo();
             setTracks(_tracks);
           }
+
+          await setDefaultPlaylists();
+          dispatch(setDBInitialized());
         }
       })();
     }
   }, [isTracksLoaded, storeTracks]);
+
+  React.useEffect(() => {
+    if (db.current && db.current.isReady) {
+      (async () => {
+        if (isTracksLoaded) {
+          await setDefaultPlaylists();
+        }
+      })();
+    }
+  }, [tracks]);
+
+  const setDefaultPlaylists = async () => {
+    let defaultPlaylists = Object.values(
+      Object.keys(storePlaylists)
+        .filter((key) => /^All Tracks$/.test(key))
+        .reduce((playlist, key, index) => {
+          playlist[index] = { name: key, tracks: storePlaylists[key] };
+          return playlist;
+        }, {})
+    );
+
+    for (let i = 0; i < defaultPlaylists.length; i++) {
+      await db.current.updatePlaylist({
+        playlist_id: defaultPlaylists[i].name,
+        tracks: defaultPlaylists[i].tracks,
+      });
+    }
+
+    let favouriteTracks = tracks
+      .filter((t) => t.favourite)
+      .map((t) => t.track_id);
+
+    await db.current.updatePlaylist({
+      playlist_id: PlaylistType.FAVOURITES,
+      tracks: favouriteTracks,
+    });
+
+    let mostPlayedTracks = tracks
+      .filter((t) => t.play_count >= 5)
+      .sort((a, b) => b.play_count - a.play_count)
+      .map((t) => t.track_id);
+
+    await db.current.updatePlaylist({
+      playlist_id: PlaylistType.MOST_PLAYED,
+      tracks: mostPlayedTracks,
+    });
+
+    let recentlyPlayedTracks = tracks
+      .filter((t) => t.last_played != "0000-00-00 00:00:00")
+      .sort((a, b) => new Date(b.last_played) - new Date(a.last_played))
+      .slice(0, 10)
+      .map((t) => t.track_id);
+
+    await db.current.updatePlaylist({
+      playlist_id: PlaylistType.RECENTLY_PLAYED,
+      tracks: recentlyPlayedTracks,
+    });
+
+    let playlists = await db.current.getPlaylists();
+    setPlaylists(playlists);
+  };
 
   const favTrack = async (track_id, favourite) => {
     if (db.current) {
@@ -113,7 +182,7 @@ export const DBProvider = (props) => {
 
   const value = {
     tracks,
-    playlistImages,
+    playlists,
     favTrack,
     updatePlayInfo,
     getTrackInfo,

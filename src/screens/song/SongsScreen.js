@@ -8,11 +8,11 @@ import {
 import { Box } from "react-native-design-utility";
 import { useDispatch, useSelector } from "react-redux";
 
-import BackgroundImage from "../components/background/BackgroundImage.js";
-import SongItem from "../components/song/SongItem.js";
-import { PlaylistType } from "../constants/constants.js";
-import { theme } from "../constants/theme.js";
-import { getTrackList } from "../reducers/Library/index.js";
+import BackgroundImage from "../../components/background/BackgroundImage.js";
+import SongItem from "../../components/song/SongItem.js";
+import { PlaylistType } from "../../constants/constants.js";
+import { theme } from "../../constants/theme.js";
+import { getTrackList } from "../../reducers/Library/index.js";
 
 const SongsScreen = () => {
   const { isLoading, tracks } = useSelector((state) => state.Library);

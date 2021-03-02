@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { AppState } from "react-native";
 import { Provider as ReduxProvider } from "react-redux";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
@@ -16,19 +16,13 @@ import { setTrackList } from "reducers/Library/actions";
 
 import Service from "./service";
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-  },
-};
-
 export default function withProvider() {
   useEffect(() => {
     (async () => {
       try {
         await SplashScreen.preventAutoHideAsync();
         await prepareResources();
+
         store.dispatch(initializePlayback());
 
         AppState.addEventListener("change", (appState) => {
@@ -38,8 +32,6 @@ export default function withProvider() {
         });
 
         TrackPlayer.registerPlaybackService(() => Service(store.dispatch));
-
-        await SplashScreen.hideAsync();
       } catch (error) {
         console.warn(error);
       }
@@ -54,6 +46,13 @@ export default function withProvider() {
     } catch (error) {
       console.warn(error);
     }
+  };
+
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+    },
   };
 
   return (

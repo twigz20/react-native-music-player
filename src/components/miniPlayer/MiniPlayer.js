@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { TouchableOpacity, Image } from "react-native";
 import { Box, Text } from "react-native-design-utility";
 import {
@@ -17,7 +17,6 @@ import ProgressSlider from "./ProgressSlider.js";
 import { theme } from "../../constants/theme";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserPlaying } from "../../reducers/Player/actions";
-import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
 import TextTicker from "react-native-text-ticker";
 

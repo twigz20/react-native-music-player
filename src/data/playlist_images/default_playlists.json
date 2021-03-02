@@ -1,0 +1,26 @@
+[
+  {
+    "playlist_id": "All Tracks",
+    "playlist_image_id": 49,
+    "in_use": 1,
+    "tracks": []
+  },
+  {
+    "playlist_id": "Favourites",
+    "playlist_image_id": 47,
+    "in_use": 1,
+    "tracks": []
+  },
+  {
+    "playlist_id": "Most Played",
+    "playlist_image_id": 45,
+    "in_use": 1,
+    "tracks": []
+  },
+  {
+    "playlist_id": "Recently Played",
+    "playlist_image_id": 38,
+    "in_use": 1,
+    "tracks": []
+  }
+]

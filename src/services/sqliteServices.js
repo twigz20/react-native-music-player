@@ -1,6 +1,6 @@
 import SQLite from "react-native-sqlite-storage";
 import { TrackModel } from "../models/TrackModel";
-import PlaylistImages from "../data/playlist_images.json";
+import DefaultPlaylistData from "../data/playlist_images/default_playlists.json";
 
 export class SQliteServices {
   constructor() {
@@ -29,76 +29,108 @@ export class SQliteServices {
       );
       await this._db.executeSql(
         `
-      CREATE TABLE IF NOT EXISTS echo_playlist_images (
+      CREATE TABLE IF NOT EXISTS echo_playlists (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        pixabay_id int(11) NOT NULL,
-        preview varchar(255) NOT NULL,
-        image varchar(255) NOT NULL
+        playlist_id int(11) NOT NULL,
+        playlist_image_id varchar(255) NOT NULL,
+        tracks json
       )
       `,
         []
       );
 
+      await this.setupDefaultPlaylists();
+
       this.isReady = true;
 
-      const _playlistImages = await this.getPlaylistImages();
-      await this.insertPlaylistImages(_playlistImages);
       console.log("SQlite database connect");
     } catch (error) {
       console.log("SQlite database error: ", error);
     }
   }
 
-  insertPlaylistImages(_playlistImages) {
-    return new Promise((resolve, reject) => {
-      try {
-        for (let i = 0; i < PlaylistImages.length; i++) {
-          if (
-            _playlistImages
-              .map((pI) => pI.pixabay_id)
-              .includes(PlaylistImages[i].id)
-          ) {
-            continue;
-          }
-          this._db.transaction(async (tx) => {
-            await tx.executeSql(
-              "INSERT INTO echo_playlist_images (pixabay_id, preview, image) VALUES (?, ?, ?)",
-              [
-                PlaylistImages[i].id,
-                PlaylistImages[i].preview,
-                PlaylistImages[i].image,
-              ]
-            );
-          });
+  async setupDefaultPlaylists() {
+    try {
+      const [results] = await this._db.executeSql(
+        "SELECT * FROM echo_playlists",
+        []
+      );
+
+      if (results.rows.length <= 0) {
+        for (let i = 0; i < DefaultPlaylistData.length; i++) {
+          await this.insertPlaylist(DefaultPlaylistData[i]);
         }
-        resolve();
-      } catch (error) {
-        reject(error);
+      } else {
+        console.log("Default Playlists Already Configured.");
+        return;
       }
-    });
+    } catch (error) {
+      console.warn(error);
+    }
   }
 
-  getPlaylistImages() {
+  insertPlaylist(_playlist) {
     return new Promise((resolve, reject) => {
-      const playlistImages = [];
       this._db.transaction((tx) => {
         tx.executeSql(
-          "SELECT * FROM echo_playlist_images",
-          [],
-          (tx, results) => {
-            for (let i = 0; i < results.rows.length; i++) {
-              const row = results.rows.item(i);
-              playlistImages.push(row);
-            }
-            resolve(playlistImages);
+          "INSERT INTO echo_playlists (playlist_id, playlist_image_id, tracks) VALUES (?, ?, ?)",
+          [
+            _playlist.playlist_id,
+            _playlist.playlist_image_id,
+            JSON.stringify(_playlist.tracks),
+          ],
+          () => {
+            resolve();
           },
           (error) => {
-            console.log("getPlaylistImages Error: ", error);
+            console.log(
+              `Playlist Failed to Insert: ${_playlist.playlist_id}`,
+              error
+            );
             reject(error);
           }
         );
       });
     });
+  }
+
+  updatePlaylist(_playlist) {
+    return new Promise((resolve, reject) => {
+      this._db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE echo_playlists SET tracks = ? WHERE playlist_id = ?",
+          [JSON.stringify(_playlist.tracks), _playlist.playlist_id],
+          () => {
+            resolve();
+          },
+          (error) => {
+            console.log(
+              `Playlist Failed to Update: ${_playlist.playlist_id}`,
+              error
+            );
+            reject(error);
+          }
+        );
+      });
+    });
+  }
+
+  async getPlaylists() {
+    const playlists = [];
+    try {
+      const [results] = await this._db.executeSql(
+        "SELECT * FROM echo_playlists",
+        []
+      );
+      for (let i = 0; i < results.rows.length; i++) {
+        const row = results.rows.item(i);
+        row.tracks = JSON.parse(row.tracks);
+        playlists.push(row);
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+    return playlists;
   }
 
   getTracksInfo() {

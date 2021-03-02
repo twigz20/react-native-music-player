@@ -10,12 +10,20 @@ export default function reducer(state = initialState(), { type, payload }) {
         playlists: payload,
       });
 
+    case types.INIT_DB:
+      return Object.assign({}, state, {
+        dbInit: payload,
+      });
+
     case types.SET_TRACKS: {
       let artists = {};
       let albums = {};
 
       let playlists = {};
       playlists[PlaylistType.ALL] = payload.map((t) => t.id);
+      playlists[PlaylistType.FAVOURITES] = [];
+      playlists[PlaylistType.MOST_PLAYED] = [];
+      playlists[PlaylistType.RECENTLY_PLAYED] = [];
 
       payload.forEach((track) => {
         let mainArtist = track.artists.split(",")[0];
