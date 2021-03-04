@@ -1,13 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, ImageBackground, TouchableOpacity } from "react-native";
+import { ImageBackground, TouchableOpacity } from "react-native";
 import { Box, Text } from "react-native-design-utility";
 import TextTicker from "react-native-text-ticker";
 
 import { MaterialCommunityIcons, Entypo } from "react-native-vector-icons";
 
 import { theme } from "../../constants/theme.js";
-import AlbumItemMenu from "../menus/AlbumItemMenu.js";
 
 import PlayListImages from "../../data/playlist_images/index.js";
 

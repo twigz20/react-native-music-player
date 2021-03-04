@@ -12,11 +12,23 @@ import { itemPlay } from "reducers/Player/actions";
 import { theme } from "../../constants/theme";
 import { useContext } from "react";
 import { DBContext } from "../../contexts/DBContext.js";
+import AddToPlaylistModal from "../modals/AddToPlaylistModal";
+import { useState } from "react";
 
 const SongItem = memo(({ track, playlistId }) => {
   const dispatch = useDispatch();
   const currentTrack = useSelector((state) => state.Player.track);
   const dbContext = useContext(DBContext);
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const hideModal = () => {
+    setVisible(false);
+  };
+
   const _play = async () => {
     dispatch(itemPlay(track.id, playlistId, false));
     await dbContext.updatePlayInfo(track.id);
@@ -28,40 +40,48 @@ const SongItem = memo(({ track, playlistId }) => {
       : "white";
 
   return (
-    <List.Item
-      title={track.title}
-      description={track.artists + " - " + buildTime(track.duration)}
-      titleStyle={{
-        color: titleColor,
-        fontSize: 15,
-        marginLeft: "-45%",
-      }}
-      descriptionStyle={{
-        color: "#A0A0A0",
-        fontSize: 12,
-        marginLeft: "-45%",
-      }}
-      style={{}}
-      left={() => (
-        <Box f={1} w={250} justify="center" style={{ overflow: "hidden" }}>
-          <Box
-            h={60}
-            w={60}
-            radius={10}
-            justify="center"
-            style={{ overflow: "hidden" }}
-          >
-            <Image source={{ uri: track.artwork }} style={styles.image_view} />
+    <>
+      <List.Item
+        title={track.title}
+        description={track.artists + " - " + buildTime(track.duration)}
+        titleStyle={{
+          color: titleColor,
+          fontSize: 15,
+          marginLeft: "-45%",
+        }}
+        descriptionStyle={{
+          color: "#A0A0A0",
+          fontSize: 12,
+          marginLeft: "-45%",
+        }}
+        style={{}}
+        left={() => (
+          <Box f={1} w={250} justify="center" style={{ overflow: "hidden" }}>
+            <Box
+              h={60}
+              w={60}
+              radius={10}
+              justify="center"
+              style={{ overflow: "hidden" }}
+            >
+              <Image
+                source={{ uri: track.artwork }}
+                style={styles.image_view}
+              />
+            </Box>
           </Box>
-        </Box>
-      )}
-      right={() => (
-        <Box f={1} w={10} align="end" justify="center">
-          <SongItemMenu />
-        </Box>
-      )}
-      onPress={_play}
-    />
+        )}
+        right={() => (
+          <Box f={1} w={10} align="end" justify="center">
+            <SongItemMenu showModal={showModal} track={track} />
+          </Box>
+        )}
+        onPress={_play}
+      />
+      {visible ? (
+        <AddToPlaylistModal hideModal={hideModal} track={track} />
+      ) : null}
+    </>
   );
 });
 

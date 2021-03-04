@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import arrayShuffle from "array-shuffle";
 import { PlaylistType } from "../constants/constants";
 import { setDBInitialized } from "../reducers/Library";
 import { SQliteServices } from "../services/sqliteServices";
@@ -10,6 +11,11 @@ export const DBContext = React.createContext({
   favTrack: () => Promise.resolve(),
   updatePlayInfo: () => Promise.resolve(),
   getTrackInfo: () => null,
+  addPlaylist: () => null,
+  deletePlaylist: () => null,
+  clearPlaylist: () => null,
+  renamePlaylist: () => null,
+  addToPlaylist: () => null,
 });
 
 export const DBProvider = (props) => {
@@ -18,6 +24,9 @@ export const DBProvider = (props) => {
   const [playlists, setPlaylists] = React.useState([]);
   const [isTracksLoaded, setIsTracksLoaded] = React.useState(false);
   const [isDbReady, setIsDbReady] = React.useState(false);
+  const [playlistImageIds, setPlaylistImageIds] = React.useState(
+    Array.from(Array(50).keys())
+  );
   const db = React.useRef(null);
 
   const { tracks: storeTracks, playlists: storePlaylists } = useSelector(
@@ -66,7 +75,10 @@ export const DBProvider = (props) => {
             setTracks(_tracks);
           }
 
-          await setDefaultPlaylists();
+          await setPlaylistsInfo();
+
+          updatePlaylistImageIds();
+
           dispatch(setDBInitialized());
         }
       })();
@@ -77,13 +89,13 @@ export const DBProvider = (props) => {
     if (db.current && db.current.isReady) {
       (async () => {
         if (isTracksLoaded) {
-          await setDefaultPlaylists();
+          await setPlaylistsInfo();
         }
       })();
     }
   }, [tracks]);
 
-  const setDefaultPlaylists = async () => {
+  const setPlaylistsInfo = async () => {
     let defaultPlaylists = Object.values(
       Object.keys(storePlaylists)
         .filter((key) => /^All Tracks$/.test(key))
@@ -94,7 +106,7 @@ export const DBProvider = (props) => {
     );
 
     for (let i = 0; i < defaultPlaylists.length; i++) {
-      await db.current.updatePlaylist({
+      await db.current.updatePlaylistTracks({
         playlist_id: defaultPlaylists[i].name,
         tracks: defaultPlaylists[i].tracks,
       });
@@ -104,7 +116,7 @@ export const DBProvider = (props) => {
       .filter((t) => t.favourite)
       .map((t) => t.track_id);
 
-    await db.current.updatePlaylist({
+    await db.current.updatePlaylistTracks({
       playlist_id: PlaylistType.FAVOURITES,
       tracks: favouriteTracks,
     });
@@ -114,7 +126,7 @@ export const DBProvider = (props) => {
       .sort((a, b) => b.play_count - a.play_count)
       .map((t) => t.track_id);
 
-    await db.current.updatePlaylist({
+    await db.current.updatePlaylistTracks({
       playlist_id: PlaylistType.MOST_PLAYED,
       tracks: mostPlayedTracks,
     });
@@ -125,13 +137,107 @@ export const DBProvider = (props) => {
       .slice(0, 10)
       .map((t) => t.track_id);
 
-    await db.current.updatePlaylist({
+    await db.current.updatePlaylistTracks({
       playlist_id: PlaylistType.RECENTLY_PLAYED,
       tracks: recentlyPlayedTracks,
     });
 
     let playlists = await db.current.getPlaylists();
     setPlaylists(playlists);
+  };
+
+  const addPlaylist = async (playlist_id, tracks = []) => {
+    try {
+      if (db.current) {
+        let _playlistImageIds = arrayShuffle(playlistImageIds);
+        if (_playlistImageIds.length == 0) {
+          _playlistImageIds = arrayShuffle(Array.from(Array(50).keys()));
+        }
+        let playlist_image_id = _playlistImageIds.pop();
+        await db.current.insertPlaylist({
+          playlist_id: playlist_id,
+          playlist_image_id: playlist_image_id,
+          tracks: tracks,
+        });
+        setPlaylistImageIds(_playlistImageIds);
+
+        let playlists = await db.current.getPlaylists();
+        setPlaylists(playlists);
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const renamePlaylist = async (old_playlist_id, new_playlist_id) => {
+    try {
+      if (db.current) {
+        await db.current.updatePlaylistId(old_playlist_id, new_playlist_id);
+        let playlists = await db.current.getPlaylists();
+        setPlaylists(playlists);
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const deletePlaylist = async (playlist_id) => {
+    try {
+      if (db.current) {
+        await db.current.deletePlaylist(playlist_id);
+        let playlists = await db.current.getPlaylists();
+        setPlaylists(playlists);
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const addToPlaylist = async (playlist_ids, track_id) => {
+    try {
+      if (db.current) {
+        for (let i = 0; i < playlist_ids.length; i++) {
+          let playlist = playlists.find(
+            (p) => p.playlist_id == playlist_ids[i]
+          );
+          if (playlist) {
+            playlist.tracks.push(track_id);
+            playlist.tracks = [...new Set(playlist.tracks)];
+            await db.current.updatePlaylistTracks(playlist);
+            let playlists = await db.current.getPlaylists();
+            setPlaylists(playlists);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const clearPlaylist = async (playlist_id) => {
+    try {
+      if (db.current) {
+        let playlist = playlists.find((p) => p.playlist_id == playlist_id);
+        if (playlist) {
+          playlist.tracks = [];
+          await db.current.updatePlaylistTracks(playlist);
+          let playlists = await db.current.getPlaylists();
+          setPlaylists(playlists);
+        }
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const updatePlaylistImageIds = () => {
+    let usedPlaylistImageIds = playlists.map((p) =>
+      parseInt(p.playlist_image_id)
+    );
+    let _playlistImageIds = playlistImageIds.filter(
+      (pi) => !usedPlaylistImageIds.includes(pi)
+    );
+    setPlaylistImageIds(_playlistImageIds);
   };
 
   const favTrack = async (track_id, favourite) => {
@@ -186,6 +292,11 @@ export const DBProvider = (props) => {
     favTrack,
     updatePlayInfo,
     getTrackInfo,
+    addPlaylist,
+    deletePlaylist,
+    clearPlaylist,
+    renamePlaylist,
+    addToPlaylist,
   };
 
   return (

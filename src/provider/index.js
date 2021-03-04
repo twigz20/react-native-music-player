@@ -52,6 +52,7 @@ export default function withProvider() {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
+      primary: "#0099ff",
     },
   };
 

@@ -1,9 +1,11 @@
-import * as React from "react";
+import React, { useState, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { DBContext } from "../../contexts/DBContext.js";
 
-const SongItemMenu = ({ navigation, previous, showModal, track }) => {
+const PlaylistItemMenu = ({ playlist, showModal }) => {
+  const dbContext = useContext(DBContext);
   const [visible, setVisible] = React.useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
@@ -26,35 +28,54 @@ const SongItemMenu = ({ navigation, previous, showModal, track }) => {
     >
       <Menu.Item
         onPress={() => {
+          console.log("Play next was pressed");
+          closeMenu();
+        }}
+        title="Play next"
+        titleStyle={{ color: "white" }}
+      />
+      <Menu.Item
+        onPress={() => {
           console.log("Add to Queue was pressed");
+          closeMenu();
         }}
         title="Add to Queue"
         titleStyle={{ color: "white" }}
       />
       <Menu.Item
         onPress={() => {
+          console.log("Add to Playlist was pressed");
           closeMenu();
-          showModal(track);
         }}
         title="Add to Playlist"
         titleStyle={{ color: "white" }}
       />
       <Menu.Item
         onPress={() => {
-          console.log("View Album was pressed");
+          showModal();
+          closeMenu();
         }}
-        title="View Album"
+        title="Rename"
         titleStyle={{ color: "white" }}
       />
       <Menu.Item
         onPress={() => {
-          console.log("View Playlist was pressed");
+          dbContext.clearPlaylist(playlist.playlist_id);
+          closeMenu();
         }}
-        title="View Playlist"
+        title="Clear"
+        titleStyle={{ color: "white" }}
+      />
+      <Menu.Item
+        onPress={() => {
+          dbContext.deletePlaylist(playlist.playlist_id);
+          closeMenu();
+        }}
+        title="Delete"
         titleStyle={{ color: "white" }}
       />
     </Menu>
   );
 };
 
-export default SongItemMenu;
+export default PlaylistItemMenu;

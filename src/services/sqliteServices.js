@@ -80,6 +80,7 @@ export class SQliteServices {
             JSON.stringify(_playlist.tracks),
           ],
           () => {
+            console.log(`Playlist Inserted: ${_playlist.playlist_id}`);
             resolve();
           },
           (error) => {
@@ -94,12 +95,52 @@ export class SQliteServices {
     });
   }
 
-  updatePlaylist(_playlist) {
+  deletePlaylist(playlist_id) {
+    return new Promise((resolve, reject) => {
+      this._db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM echo_playlists WHERE playlist_id = ?",
+          [playlist_id],
+          () => {
+            console.log(`Playlist Deleted: ${playlist_id}`);
+            resolve();
+          },
+          (error) => {
+            console.log(`Playlist Failed to Delete: ${playlist_id}`, error);
+            reject(error);
+          }
+        );
+      });
+    });
+  }
+
+  updatePlaylistTracks(_playlist) {
     return new Promise((resolve, reject) => {
       this._db.transaction((tx) => {
         tx.executeSql(
           "UPDATE echo_playlists SET tracks = ? WHERE playlist_id = ?",
           [JSON.stringify(_playlist.tracks), _playlist.playlist_id],
+          () => {
+            resolve();
+          },
+          (error) => {
+            console.log(
+              `Playlist Failed to Update: ${_playlist.playlist_id}`,
+              error
+            );
+            reject(error);
+          }
+        );
+      });
+    });
+  }
+
+  updatePlaylistId(old_playlist_id, new_playlist_id) {
+    return new Promise((resolve, reject) => {
+      this._db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE echo_playlists SET playlist_id = ? WHERE playlist_id = ?",
+          [new_playlist_id, old_playlist_id],
           () => {
             resolve();
           },

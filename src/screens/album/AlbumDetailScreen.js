@@ -12,7 +12,6 @@ import { Box, Text } from "react-native-design-utility";
 import { useNavigation } from "@react-navigation/native";
 
 import BackgroundImage from "../../components/background/BackgroundImage.js";
-import backgroundImage from "../../components/background/assets/background.jpg";
 import { Entypo, MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AlbumDetailTrackItem from "../../components/album/AlbumDetailTrackItem.js";
