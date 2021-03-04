@@ -24,37 +24,35 @@ export default function PlaylistsScreen() {
 
   return (
     <BackgroundImage>
-      <Box f={1} dir="row" flexWrap="wrap">
-        {dbContext.playlists.slice(0, 4).map((playlist, key) => (
-          <PlaylistDefaultItem
-            key={key}
-            playlist={playlist}
-            style={{ flexBasis: "50%" }}
-          />
-        ))}
-      </Box>
-      <Box f={1} mt={-150} ml={10} mr={10} dir="col">
-        <Box dir="row">
-          <Text ml={6} size={25} color="white">
-            Playlists
-          </Text>
-          <Box f={1} mr={5} align="end" justify="center">
-            <TouchableOpacity
-              onPress={() => {
-                showModal();
-              }}
-            >
-              <Entypo name="plus" size={30} color="white" />
-            </TouchableOpacity>
-          </Box>
+      <Box f={1}>
+        <Box dir="row" flexWrap="wrap">
+          {dbContext.playlists.slice(0, 4).map((playlist, key) => (
+            <PlaylistDefaultItem key={key} playlist={playlist} />
+          ))}
         </Box>
-        <FlatList
-          data={dbContext.playlists.slice(4)}
-          keyExtractor={({ id }) => id.toString()}
-          renderItem={({ item }) => (
-            <PlaylistItem playlist={item} showModal={showModal} />
-          )}
-        />
+        <Box ml={10} mr={10} dir="col">
+          <Box dir="row">
+            <Text ml={6} size={25} color="white">
+              Playlists
+            </Text>
+            <Box f={1} mr={5} align="end" justify="center">
+              <TouchableOpacity
+                onPress={() => {
+                  showModal();
+                }}
+              >
+                <Entypo name="plus" size={30} color="white" />
+              </TouchableOpacity>
+            </Box>
+          </Box>
+          <FlatList
+            data={dbContext.playlists.slice(4)}
+            keyExtractor={({ id }) => id.toString()}
+            renderItem={({ item }) => (
+              <PlaylistItem playlist={item} showModal={showModal} />
+            )}
+          />
+        </Box>
       </Box>
       {visible ? <AddUpdatePlaylistModal hideModal={hideModal} /> : null}
     </BackgroundImage>
