@@ -47,8 +47,10 @@ async function Handler(dispatch) {
     // dispatch(playbackState());
   });
 
-  TrackPlayer.addEventListener("playback-track-changed", () => {
-    dispatch(playbackTrack());
+  TrackPlayer.addEventListener("playback-track-changed", (track) => {
+    if (track) {
+      dispatch(playbackTrack());
+    }
   });
 
   TrackPlayer.addEventListener("playback-queue-ended", ({ position }) => {

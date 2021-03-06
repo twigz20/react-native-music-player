@@ -61,7 +61,6 @@ export class SQliteServices {
           await this.insertPlaylist(DefaultPlaylistData[i]);
         }
       } else {
-        console.log("Default Playlists Already Configured.");
         return;
       }
     } catch (error) {

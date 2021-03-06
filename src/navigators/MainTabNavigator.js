@@ -12,7 +12,7 @@ import SongsTab from "../tabs/SongsTab.js";
 import ArtistsTab from "../tabs/ArtistsTab.js";
 import PlaylistsTab from "../tabs/PlaylistsTab.js";
 
-import MiniPlayer from "../components/miniPlayer/MiniPlayer.js";
+import MiniPlayer from "../components/miniPlayer";
 
 const MainTab = createBottomTabNavigator();
 

@@ -6,14 +6,16 @@ export * from "./actions";
 export default function reducer(state = initialState(), { type, payload }) {
   switch (type) {
     case types.SET_ALL_PLAYLISTS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         playlists: payload,
-      });
+      };
 
     case types.INIT_DB:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         dbInit: payload,
-      });
+      };
 
     case types.SET_TRACKS: {
       let artists = {};

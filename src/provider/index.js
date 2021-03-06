@@ -58,13 +58,13 @@ export default function withProvider() {
 
   return (
     <ReduxProvider store={store}>
-      <PaperProvider theme={theme}>
-        <DBProvider>
+      <DBProvider>
+        <PaperProvider theme={theme}>
           <NavigationContainer>
             <MainStackNavigator />
           </NavigationContainer>
-        </DBProvider>
-      </PaperProvider>
+        </PaperProvider>
+      </DBProvider>
     </ReduxProvider>
   );
 }

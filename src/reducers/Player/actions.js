@@ -135,10 +135,15 @@ export function setShuffleMode(shuffle) {
       let queue = await TrackPlayer.getQueue();
       await TrackPlayer.remove(queue.map((t) => t.id.toString()));
 
+      let beforeTrackList = tracks.filter((t) =>
+        beforeAfterQueue.before.includes(t.id)
+      );
+
       let afterTrackList = tracks.filter((t) =>
         beforeAfterQueue.after.includes(t.id)
       );
 
+      await TrackPlayer.add(beforeTrackList, trackId);
       await TrackPlayer.add(afterTrackList);
     }
 
@@ -246,33 +251,23 @@ function getBeforeAfterQueue(trackId, playlistId, playlists) {
   };
 }
 
-export function itemPlay(id, playlistId, reset = true) {
+export function itemPlay(id, playlistId) {
   return async (dispatch, getState) => {
     try {
       const { shuffle, playlist } = getState().Player;
-      const { playlists, tracks } = getState().Library;
-
-      if (playlistId !== playlist || !reset) {
-        await TrackPlayer.reset();
-
-        if (reset) {
-          dispatch(playerReset());
+      const { tracks } = getState().Library;
+      let track = tracks.find((track) => track.id == id);
+      if (playlistId !== playlist) {
+        if (playlist) {
+          await TrackPlayer.reset();
         }
 
-        let track = tracks.find((track) => track.id == id);
         await TrackPlayer.add([track]);
-
-        let beforeAfterQueue = getBeforeAfterQueue(id, playlistId, playlists);
-        let afterTrackList = tracks.filter((t) =>
-          beforeAfterQueue.after.includes(t.id)
-        );
-
-        await TrackPlayer.add(afterTrackList);
-
-        dispatch(setCurrentTrack(track, playlistId));
+      } else {
+        await TrackPlayer.skip(id.toString());
       }
 
-      await TrackPlayer.skip(id.toString());
+      dispatch(setCurrentTrack(track, playlistId));
 
       dispatch(setShuffleMode(shuffle));
 

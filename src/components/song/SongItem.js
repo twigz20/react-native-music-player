@@ -30,7 +30,7 @@ const SongItem = memo(({ track, playlistId }) => {
   };
 
   const _play = async () => {
-    dispatch(itemPlay(track.id, playlistId, false));
+    dispatch(itemPlay(track.id, playlistId));
     await dbContext.updatePlayInfo(track.id);
   };
 

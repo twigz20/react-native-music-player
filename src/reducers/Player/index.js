@@ -20,6 +20,11 @@ export default function reducer(state = initialState(), { type, payload }) {
         duration: payload.duration,
         playlist: payload.playlist,
       };
+    case types.PLAYLIST:
+      return {
+        ...state,
+        playlist: payload.playlist,
+      };
     case types.PLAYING:
       return {
         ...state,
