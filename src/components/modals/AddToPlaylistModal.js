@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 
 import { MaterialCommunityIcons, Entypo } from "react-native-vector-icons";
 
-import { DBContext } from "../../contexts/DBContext.js";
 import {
   FlatList,
   TouchableOpacity,
@@ -18,14 +17,15 @@ import { List } from "react-native-paper";
 import PlayListImages from "../../data/playlist_images/index.js";
 import { theme } from "../../constants/theme.js";
 import { useEffect } from "react";
+import { useDatabase } from "../../contexts/DatabaseContext.js";
 
 const AddToPlaylistModal = ({ track, hideModal }) => {
-  const dbContext = useContext(DBContext);
+  const { addToPlaylist, playlists } = useDatabase();
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [playistItems, setPlaylistItems] = useState([]);
 
   useEffect(() => {
-    let _playlistItems = dbContext.playlists.slice(4).map((p) => {
+    let _playlistItems = playlists.slice(4).map((p) => {
       p.isSelected = false;
       p.selectedIcon = p.isSelected
         ? "checkbox-marked-circle"
@@ -145,7 +145,7 @@ const AddToPlaylistModal = ({ track, hideModal }) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                dbContext.addToPlaylist(selectedPlaylists, track.id);
+                addToPlaylist(selectedPlaylists, track.id);
                 hideModal();
               }}
             >

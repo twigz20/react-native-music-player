@@ -8,7 +8,6 @@ import PlaylistItemMenu from "../menus/PlaylistItemMenu.js";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useContext } from "react";
-import { DBContext } from "../../contexts/DBContext.js";
 
 import PlayListImages from "../../data/playlist_images/index.js";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +16,6 @@ import { useState } from "react";
 
 const PlaylistItem = memo(({ playlist }) => {
   const dispatch = useDispatch();
-  const dbContext = useContext(DBContext);
   const navigator = useNavigation();
   const [visible, setVisible] = useState(false);
 

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { TouchableOpacity } from "react-native";
+import { memo } from "react";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -18,7 +19,7 @@ const NavBarMenu = ({ navigation, previous }) => {
             name="dots-vertical"
             size={20}
             color="white"
-            style={{ marginRight: 10, marginLeft: 10 }}
+            style={styles.menu}
           />
         </TouchableOpacity>
       }
@@ -46,4 +47,8 @@ const NavBarMenu = ({ navigation, previous }) => {
   );
 };
 
-export default NavBarMenu;
+const styles = StyleSheet.create({
+  menu: { marginRight: 10, marginLeft: 10 },
+});
+
+export default memo(NavBarMenu);

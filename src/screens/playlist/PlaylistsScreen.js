@@ -10,23 +10,26 @@ import BackgroundImage from "../../components/background/BackgroundImage.js";
 
 import PlaylistItem from "../../components/playlist/PlaylistItem.js";
 import PlaylistDefaultItem from "../../components/playlist/PlaylistDefaultItem.js";
-import { DBContext } from "../../contexts/DBContext.js";
+import { useDatabase } from "../../contexts/DatabaseContext.js";
 import { FlatList, TouchableOpacity, View, StyleSheet } from "react-native";
 import AddUpdatePlaylistModal from "../../components/modals/AddUpdatePlaylistModal.js";
+import { useEffect } from "react";
 
 export default function PlaylistsScreen() {
-  const dbContext = useContext(DBContext);
+  const { playlists } = useDatabase();
   const [visible, setVisible] = useState(false);
 
   const showModal = () => setVisible(true);
 
   const hideModal = () => setVisible(false);
 
+  console.log("PlaylistsScreen");
+
   return (
     <BackgroundImage>
       <Box f={1}>
         <Box dir="row" flexWrap="wrap">
-          {dbContext.playlists.slice(0, 4).map((playlist, key) => (
+          {playlists.slice(0, 4).map((playlist, key) => (
             <PlaylistDefaultItem key={key} playlist={playlist} />
           ))}
         </Box>
@@ -46,7 +49,7 @@ export default function PlaylistsScreen() {
             </Box>
           </Box>
           <FlatList
-            data={dbContext.playlists.slice(4)}
+            data={playlists.slice(4)}
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => (
               <PlaylistItem playlist={item} showModal={showModal} />

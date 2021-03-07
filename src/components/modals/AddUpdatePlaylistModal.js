@@ -2,12 +2,14 @@ import React, { useContext, useState } from "react";
 import { Text } from "react-native-design-utility";
 import { Modal, Portal, TextInput } from "react-native-paper";
 
-import { DBContext } from "../../contexts/DBContext.js";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { useEffect } from "react";
+import { database } from "../../database/index.js";
+import { useDatabaseInfo } from "../../hooks/useDatabase.js";
+import { useDatabase } from "../../contexts/DatabaseContext.js";
 
 const AddUpdatePlaylistModal = ({ hideModal, isUpdate, playlist }) => {
-  const dbContext = useContext(DBContext);
+  const { addPlaylist, renamePlaylist } = useDatabase();
   const [playlistIdToUpdate, setPlaylistIdToUpdate] = useState("");
   const [modalInputValue, setModalInputValue] = useState("");
   const [modalTitle, setModalTitle] = useState("New Playlist");
@@ -51,15 +53,14 @@ const AddUpdatePlaylistModal = ({ hideModal, isUpdate, playlist }) => {
               <Text style={styles.modalActionCancel}>CANCEL</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
+              onPress={async () => {
                 let playlist_id = modalInputValue.trim();
                 if (playlist_id != "") {
                   if (isUpdate) {
-                    console.log(playlistIdToUpdate, playlist_id);
-                    dbContext.renamePlaylist(playlistIdToUpdate, playlist_id);
+                    renamePlaylist(playlistIdToUpdate, playlist_id);
                     setPlaylistIdToUpdate("");
                   } else {
-                    dbContext.addPlaylist(playlist_id);
+                    await addPlaylist(playlist_id);
                   }
                   setModalInputValue("");
                   hideModal();

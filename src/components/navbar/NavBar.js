@@ -1,5 +1,5 @@
-import * as React from "react";
-import { TouchableOpacity } from "react-native";
+import React, { memo } from "react";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { Appbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -7,14 +7,7 @@ import NavBarMenu from "../menus/NavBarMenu.js";
 
 const NavBar = ({ navigation, previous }) => {
   return (
-    <Appbar.Header
-      style={{
-        backgroundColor: "transparent",
-        borderBottomWidth: 1,
-        borderColor: "#9fc8e2",
-        height: 45,
-      }}
-    >
+    <Appbar.Header style={styles.header}>
       {previous ? (
         <Appbar.BackAction
           size={25}
@@ -27,7 +20,7 @@ const NavBar = ({ navigation, previous }) => {
           name="menu"
           size={25}
           color="white"
-          style={{ marginLeft: 5 }}
+          style={styles.menu}
         />
       </TouchableOpacity>
       <Appbar.Content title="" />
@@ -39,4 +32,16 @@ const NavBar = ({ navigation, previous }) => {
   );
 };
 
-export default NavBar;
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: "transparent",
+    borderBottomWidth: 1,
+    borderColor: "#9fc8e2",
+    height: 45,
+  },
+  menu: {
+    marginLeft: 5,
+  },
+});
+
+export default memo(NavBar);

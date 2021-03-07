@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { itemPlay } from "reducers/Player/actions";
 import { theme } from "../../constants/theme";
 import { useContext } from "react";
-import { DBContext } from "../../contexts/DBContext.js";
 import { useNavigation } from "@react-navigation/native";
 
 const ArtistItem = memo(({ artist }) => {

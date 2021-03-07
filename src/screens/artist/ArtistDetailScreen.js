@@ -8,7 +8,6 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import { DBContext } from "../../contexts/DBContext";
 import { Box, Text } from "react-native-design-utility";
 import { useNavigation } from "@react-navigation/native";
 
@@ -30,7 +29,6 @@ import SongItem from "../../components/song/SongItem";
 import { PlaylistType } from "../../constants/constants";
 
 const ArtistDetailScreen = ({ route, navigation }) => {
-  const dbContext = useContext(DBContext);
   const tracks = useSelector((state) => state.Library.tracks);
   const albums = useSelector((state) => state.Library.albums);
 
@@ -53,7 +51,6 @@ const ArtistDetailScreen = ({ route, navigation }) => {
     dispatch(setShuffle(true));
     let randomTrack = arrayShuffle(route.params.album.tracks)[0];
     dispatch(itemPlay(randomTrack, route.params.album.id));
-    await dbContext.updatePlayInfo(randomTrack);
   };
 
   // let albumTracks = tracks.filter((track) =>

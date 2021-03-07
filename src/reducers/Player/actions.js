@@ -10,6 +10,7 @@ import TrackPlayer, {
 import * as types from "./types";
 
 import arrayShuffle from "array-shuffle";
+import { database } from "../../database";
 
 export function initializePlayback() {
   return async (dispatch) => {
@@ -44,23 +45,28 @@ export function playbackState() {
   };
 }
 
-export function playbackTrack() {
+export function playbackTrack(track, position, nextTrack) {
   return async (dispatch, getState) => {
-    const { track, playlist } = getState().Player;
-    if (track != null) {
-      const trackId = await TrackPlayer.getCurrentTrack();
-      const duration = await TrackPlayer.getDuration();
+    if (nextTrack != null) {
+      const { tracks } = getState().Library;
+      const { playlist } = getState().Player;
+      let track = tracks.find((t) => t.id == nextTrack);
 
-      const track = await TrackPlayer.getTrack(trackId);
+      let trackInfo = await database.getTrackInfo(nextTrack);
+      trackInfo.play_count++;
+      trackInfo.last_played = Date();
+      await database.updateTrackInfo(trackInfo);
 
       dispatch({
         type: types.TRACK,
         payload: {
           track,
-          duration,
+          duration: track.duration,
           playlist,
         },
       });
+
+      dispatch(setUserPlaying(true));
     }
   };
 }
@@ -263,15 +269,16 @@ export function itemPlay(id, playlistId) {
         }
 
         await TrackPlayer.add([track]);
+
+        dispatch(setPlaylist(playlistId));
       } else {
         await TrackPlayer.skip(id.toString());
       }
 
-      dispatch(setCurrentTrack(track, playlistId));
+      // console.log();
+      // await database.updatePlaylistId(track.id);
 
       dispatch(setShuffleMode(shuffle));
-
-      dispatch(setUserPlaying(true));
     } catch (error) {
       console.log("Play Error: ", error);
     }

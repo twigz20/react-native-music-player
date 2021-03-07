@@ -2,10 +2,10 @@ import React, { useState, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import { DBContext } from "../../contexts/DBContext.js";
+import { useDatabase } from "../../contexts/DatabaseContext.js";
 
 const PlaylistItemMenu = ({ playlist, showModal }) => {
-  const dbContext = useContext(DBContext);
+  const { clearPlaylist, deletePlaylist } = useDatabase();
   const [visible, setVisible] = React.useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
@@ -60,7 +60,8 @@ const PlaylistItemMenu = ({ playlist, showModal }) => {
       />
       <Menu.Item
         onPress={() => {
-          dbContext.clearPlaylist(playlist.playlist_id);
+          // database.updatePlaylistTracks();
+          clearPlaylist(playlist.playlist_id);
           closeMenu();
         }}
         title="Clear"
@@ -68,7 +69,7 @@ const PlaylistItemMenu = ({ playlist, showModal }) => {
       />
       <Menu.Item
         onPress={() => {
-          dbContext.deletePlaylist(playlist.playlist_id);
+          deletePlaylist(playlist.playlist_id);
           closeMenu();
         }}
         title="Delete"

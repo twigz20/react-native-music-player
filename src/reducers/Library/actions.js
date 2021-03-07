@@ -31,7 +31,7 @@ export const getTrackList = () => {
       method: "GET",
     })
       .then((response) => response.json())
-      .then((responseJson) => {
+      .then(async (responseJson) => {
         dispatch({
           type: types.SET_TRACKS,
           payload: responseJson,

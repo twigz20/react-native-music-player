@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import { DBContext } from "../../contexts/DBContext";
 import { Box, Text } from "react-native-design-utility";
 import { useNavigation } from "@react-navigation/native";
 
@@ -25,7 +24,6 @@ import TextTicker from "react-native-text-ticker";
 import arrayShuffle from "array-shuffle";
 
 const AlbumDetailScreen = ({ route, navigation }) => {
-  const dbContext = useContext(DBContext);
   const tracks = useSelector((state) => state.Library.tracks);
   const dispatch = useDispatch();
 
@@ -33,7 +31,6 @@ const AlbumDetailScreen = ({ route, navigation }) => {
     dispatch(setShuffle(true));
     let randomTrack = arrayShuffle(route.params.album.tracks)[0];
     dispatch(itemPlay(randomTrack, route.params.album.id));
-    await dbContext.updatePlayInfo(randomTrack);
   };
 
   let albumTracks = tracks.filter((track) =>

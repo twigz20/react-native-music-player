@@ -10,7 +10,6 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 
 import { theme } from "../../constants/theme.js";
-import { DBContext } from "../../contexts/DBContext.js";
 import { itemPlay } from "../../reducers/Player/actions.js";
 import { buildTime } from "../../utils/helpers.js";
 import SongItemMenu from "../menus/SongItemMenu.js";
@@ -19,11 +18,9 @@ export default function AlbumDetailTrackItem({ track }) {
   const navigator = useNavigation();
   const dispatch = useDispatch();
   const currentTrack = useSelector((state) => state.Player.track);
-  const dbContext = useContext(DBContext);
 
   const _play = async () => {
     dispatch(itemPlay(track.id, `Album-${track.album_id}`));
-    await dbContext.updatePlayInfo(track.id);
   };
 
   const titleColor =

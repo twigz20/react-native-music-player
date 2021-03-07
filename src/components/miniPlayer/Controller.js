@@ -6,28 +6,35 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import { theme } from "../../constants/theme";
 import { setUserPlaying } from "../../reducers/Player/actions";
-import { DBContext } from "../../contexts/DBContext.js";
 
 import store from "../../provider/store";
+import { objectsEqual } from "../../utils/helpers";
+import { database } from "../../database";
 
 class Controller extends PureComponent {
-  static contextType = DBContext;
-
   constructor() {
     super();
+
+    const { playing, track } = store.getState().Player;
+
     this.state = {
-      playing: false,
-      isFavourite: false,
-      track: null,
+      playing: true,
+      isFavourite: !!track.favourite,
+      track: track,
     };
   }
 
   componentDidMount() {
-    store.subscribe(() => {
+    store.subscribe(async () => {
       const { playing, track } = store.getState().Player;
 
-      const db = this.context;
-      let trackInfo = db.getTrackInfo(track.id);
+      let trackInfo = await database.getTrackInfo(track.id);
+
+      let newState = {
+        playing: playing,
+        track: track,
+        isFavourite: !!trackInfo.favourite,
+      };
 
       this.setState({
         playing: playing,
@@ -38,12 +45,11 @@ class Controller extends PureComponent {
   }
 
   onFavourite = async () => {
-    const db = this.context;
-    let trackInfo = db.getTrackInfo(this.state.track.id);
-    let fav = !!!trackInfo.favourite;
-    await db.favTrack(this.state.track.id, fav);
+    let trackInfo = await database.getTrackInfo(this.state.track.id);
+    trackInfo.favourite = !!!trackInfo.favourite;
+    await database.updateTrackInfo(trackInfo);
     this.setState({
-      isFavourite: fav,
+      isFavourite: trackInfo.favourite,
     });
   };
 
@@ -52,6 +58,7 @@ class Controller extends PureComponent {
   };
 
   render() {
+    console.log("Controller");
     return (
       <Box f={1} dir="row">
         <Box f={1} align="end">

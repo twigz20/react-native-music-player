@@ -18,31 +18,33 @@ import { makeHitSlop } from "../../constants/metrics.js";
 import { Box, Text } from "react-native-design-utility";
 import ProgressSlider from "../../components/player/ProgressSlider.js";
 import { useSelector } from "react-redux";
-import { DBContext } from "../../contexts/DBContext.js";
 import TextTicker from "react-native-text-ticker";
 import Controller from "../../components/player/Controller.js";
+import { useDatabase } from "../../contexts/DatabaseContext.js";
 
 const { width, height } = Dimensions.get("window");
 
 const PlayerScreen = () => {
+  const { getTrackInfo, favTrack } = useDatabase();
   const track = useSelector((state) => state.Player.track);
-  const dbContext = useContext(DBContext);
 
   const navigation = useNavigation();
   const [isFavourite, setFavourite] = useState(false);
 
   useEffect(() => {
-    if (track) {
-      let trackInfo = dbContext.getTrackInfo(track.id);
-      setFavourite(!!trackInfo.favourite);
-    }
+    (async () => {
+      if (track) {
+        let trackInfo = await getTrackInfo(track.id);
+        setFavourite(!!trackInfo.favourite);
+      }
+    })();
   }, [track]);
 
   const onFavourite = async () => {
-    let trackInfo = dbContext.getTrackInfo(track.id);
-    let fav = !!trackInfo.favourite;
-    await dbContext.favTrack(track.id, fav);
-    setFavourite(fav == 1);
+    let trackInfo = await getTrackInfo(track.id);
+    let fav = !trackInfo.favourite;
+    await favTrack(track.id, fav);
+    setFavourite(fav);
   };
 
   return (

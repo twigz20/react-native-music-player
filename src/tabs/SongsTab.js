@@ -14,7 +14,11 @@ const SongsTab = () => {
       initialRouteName="Songs"
       screenOptions={{
         headerTransparent: true,
-        header: (props) => <NavBar {...props} />,
+        header: (props) => {
+          return (
+            <NavBar navigation={props.navigation} previous={props.previous} />
+          );
+        },
       }}
     >
       <SongsStack.Screen name="Songs" component={SongsScreen} />

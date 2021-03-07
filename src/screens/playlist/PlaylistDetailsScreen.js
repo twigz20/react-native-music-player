@@ -12,14 +12,12 @@ import PlaylistItem from "../../components/playlist/PlaylistItem.js";
 import PlaylistDefaultItem from "../../components/playlist/PlaylistDefaultItem.js";
 import { getTotalMinutes } from "../../utils/helpers";
 import { itemPlay, setShuffle } from "../../reducers/Player/actions";
-import { DBContext } from "../../contexts/DBContext.js";
 import TextTicker from "react-native-text-ticker";
 import arrayShuffle from "array-shuffle";
 import { TouchableOpacity, Image, FlatList } from "react-native";
 import SongItem from "../../components/song/SongItem.js";
 
 export default function PlaylistDetailsScreen({ route, navigation }) {
-  const dbContext = useContext(DBContext);
   const tracks = useSelector((state) => state.Library.tracks);
   const dispatch = useDispatch();
 
@@ -29,7 +27,6 @@ export default function PlaylistDetailsScreen({ route, navigation }) {
     dispatch(setShuffle(true));
     let randomTrack = arrayShuffle(playlist.tracks)[0];
     dispatch(itemPlay(randomTrack, playlist.playlist_id));
-    await dbContext.updatePlayInfo(randomTrack);
   };
 
   let playlistTracks = tracks.filter((track) =>
@@ -41,8 +38,6 @@ export default function PlaylistDetailsScreen({ route, navigation }) {
     playlistMinutes += track.duration;
   });
   playlistMinutes = getTotalMinutes(playlistMinutes);
-
-  console.log(playlist);
 
   return (
     <BackgroundImage>

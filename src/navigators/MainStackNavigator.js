@@ -12,21 +12,6 @@ import * as SplashScreen from "expo-splash-screen";
 const MainStack = createStackNavigator();
 
 const MainStackNavigator = () => {
-  const dbInit = useSelector((state) => state.Library.dbInit);
-
-  useEffect(() => {
-    (async () => {
-      console.log("DB: ", dbInit);
-      if (dbInit) {
-        await SplashScreen.hideAsync();
-      }
-    })();
-  }, [dbInit]);
-
-  if (!dbInit) {
-    return null;
-  }
-
   return (
     <MainStack.Navigator headerMode="none" mode="modal">
       <MainStack.Screen name="Tabs" component={MainTabNavigator} />

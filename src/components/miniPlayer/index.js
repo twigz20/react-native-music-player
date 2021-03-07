@@ -59,7 +59,7 @@ const MiniPlayer = () => {
               <Controller />
             </Box>
           </Box>
-          <ProgressSlider />
+          <ProgressSlider duration={track.duration} />
         </TouchableOpacity>
       ) : null}
     </>

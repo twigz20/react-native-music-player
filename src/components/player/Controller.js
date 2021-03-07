@@ -69,6 +69,13 @@ class PlayerScreen extends PureComponent {
     });
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   onPressShuffle = () => {
     store.dispatch(setShuffleMode(!this.state.shuffle));
   };
